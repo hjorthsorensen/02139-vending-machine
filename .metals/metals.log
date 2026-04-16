@@ -192,3 +192,5 @@ WARNING: Unmatched cancel notification for request id 4344
 2026.04.16 17:07:41 INFO  time: compiled vending-test in 7.67s
 2026.04.16 17:08:40 INFO  compiling vending-test (1 scala source)
 2026.04.16 17:08:43 INFO  time: compiled vending-test in 3.94s
+Apr 16, 2026 5:13:33 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
