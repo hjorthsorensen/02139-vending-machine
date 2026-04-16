@@ -1,0 +1,13 @@
+# Scala/SBT build folders
+vending/target/
+vending/project/target/
+vending/project/project/
+
+# Metals/Bloop IDE folders (The cause of your error!)
+vending/.bloop/
+vending/.metals/
+vending/.settings/
+
+# Waveform files
+*.vcd
+test_run_dir/
