@@ -10,5 +10,8 @@ Vendingbasic has the basic features of:
 
 ### Main Project - Vending Machine
 The main project, vending, has ***
+<<<<<<< HEAD
 asdjananda
 
+=======
+>>>>>>> 5b120544aeae07bd6163f5eb772b1f954559b1e8
