@@ -1,0 +1,15 @@
+[0m[[0m[0mdebug[0m] [0m[0mPackaging C:\Users\mikke\OneDrive\Desktop\DTU\02139 Digital Electronics 2\vendingmachineproject\02139-vending-machine\vending\target\scala-2.13\vending_2.13-0.1.0-SNAPSHOT.jar ...[0m
+[0m[[0m[0mdebug[0m] [0m[0mInput file mappings:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	SevenSegDec$$anon$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\mikke\OneDrive\Desktop\DTU\02139 Digital Electronics 2\vendingmachineproject\02139-vending-machine\vending\target\scala-2.13\classes\SevenSegDec$$anon$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	SevenSegDec.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\mikke\OneDrive\Desktop\DTU\02139 Digital Electronics 2\vendingmachineproject\02139-vending-machine\vending\target\scala-2.13\classes\SevenSegDec.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	VendingMachine$$anon$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\mikke\OneDrive\Desktop\DTU\02139 Digital Electronics 2\vendingmachineproject\02139-vending-machine\vending\target\scala-2.13\classes\VendingMachine$$anon$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	VendingMachine$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\mikke\OneDrive\Desktop\DTU\02139 Digital Electronics 2\vendingmachineproject\02139-vending-machine\vending\target\scala-2.13\classes\VendingMachine$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	VendingMachine$delayedInit$body.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\mikke\OneDrive\Desktop\DTU\02139 Digital Electronics 2\vendingmachineproject\02139-vending-machine\vending\target\scala-2.13\classes\VendingMachine$delayedInit$body.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	VendingMachine.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\mikke\OneDrive\Desktop\DTU\02139 Digital Electronics 2\vendingmachineproject\02139-vending-machine\vending\target\scala-2.13\classes\VendingMachine.class[0m
+[0m[[0m[0mdebug[0m] [0m[0mDone packaging.[0m

@@ -1,0 +1,12 @@
+[0m[[0m[31merror[0m] [0m[0mfirrtl.passes.PassExceptions: [0m
+[0m[[0m[31merror[0m] [0m[0mfirrtl.passes.CheckInitialization$RefNotInitializedException:  @[\\src\\main\\scala\\VendingMachine.scala 42:25] : [module VendingMachine]  Reference activeDigit is not fully initialized.[0m
+[0m[[0m[31merror[0m] [0m[0m   : activeDigit <= mux(_T_7, UInt<3>("h7"), mux(_T_8, UInt<4>("hb"), mux(_T_9, UInt<4>("hd"), mux(_T_10, UInt<4>("he"), VOID))))[0m
+[0m[[0m[31merror[0m] [0m[0mfirrtl.passes.CheckInitialization$RefNotInitializedException:  @[\\src\\main\\scala\\VendingMachine.scala 41:29] : [module VendingMachine]  Reference sevSegDecoder is not fully initialized.[0m
+[0m[[0m[31merror[0m] [0m[0m   : sevSegDecoder.io.in <= mux(_T_7, tensDigit, mux(_T_8, onesDigit, mux(_T_9, priceOnes, mux(_T_10, priceTens, VOID))))[0m
+[0m[[0m[31merror[0m] [0m[0mfirrtl.passes.PassException: 2 errors detected![0m
+[0m[[0m[31merror[0m] [0m[0m(Compile / [31mrun[0m) firrtl.passes.PassExceptions: [0m
+[0m[[0m[31merror[0m] [0m[0mfirrtl.passes.CheckInitialization$RefNotInitializedException:  @[\\src\\main\\scala\\VendingMachine.scala 42:25] : [module VendingMachine]  Reference activeDigit is not fully initialized.[0m
+[0m[[0m[31merror[0m] [0m[0m   : activeDigit <= mux(_T_7, UInt<3>("h7"), mux(_T_8, UInt<4>("hb"), mux(_T_9, UInt<4>("hd"), mux(_T_10, UInt<4>("he"), VOID))))[0m
+[0m[[0m[31merror[0m] [0m[0mfirrtl.passes.CheckInitialization$RefNotInitializedException:  @[\\src\\main\\scala\\VendingMachine.scala 41:29] : [module VendingMachine]  Reference sevSegDecoder is not fully initialized.[0m
+[0m[[0m[31merror[0m] [0m[0m   : sevSegDecoder.io.in <= mux(_T_7, tensDigit, mux(_T_8, onesDigit, mux(_T_9, priceOnes, mux(_T_10, priceTens, VOID))))[0m
+[0m[[0m[31merror[0m] [0m[0mfirrtl.passes.PassException: 2 errors detected![0m
