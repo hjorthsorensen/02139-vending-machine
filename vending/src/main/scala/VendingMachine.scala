@@ -44,7 +44,6 @@ class VendingMachine(maxCount: Int) extends Module {
   sevSegDecoder.io.in := 0.U
 
 
-
  /////# FSM LOGIC #/////
 
   // STATE DEFINITIONS //
@@ -129,10 +128,15 @@ class VendingMachine(maxCount: Int) extends Module {
     }
   }
 
+  val displayMux  = WireDefault(activeDigit)
+  when(stateReg === alarm && !blinkReg) {
+    displayMux := "b1111".U
+  }
+
 
   /////# OUTPUT ASSIGNMENTS #/////
   io.seg := ~sevSegDecoder.io.out      
-  io.an  := activeDigit     
+  io.an  := displayMux     
   io.releaseCan := (stateReg === busy)
   io.alarm := (stateReg === alarm) && blinkReg
 
