@@ -9,7 +9,7 @@ Vendingbasic has the basic features of:
 - Alarm with blinking LED
 
 ### Main Project - Vending Machine
-The main project, vending, has ***i
+The main project, vending, has \insertinfo\
 
 IDEER:
 Gør så penge ikke kan komme over 99, måske en LED som viser at penge bliver spyttet ud igen
