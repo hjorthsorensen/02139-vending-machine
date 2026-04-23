@@ -12,6 +12,6 @@ Vendingbasic has the basic features of:
 The main project, \vending, has some different capabilities.
 
 IDEER:
-Gør så penge ikke kan komme over 99, måske en LED som viser at penge bliver spyttet ud igen
+Gør så penge ikke kan komme over 99, måske en LED som viser at penge bliver spyttet ud igen: FÆRDIG
 UART Menu
-Prismenu i stedet for bare switches med pris
+Prismenu i stedet for bare switches med pris: BEGYNDT
