@@ -13,5 +13,5 @@ The main project, vending, has ***
 <<<<<<< HEAD
 asdjananda
 
-=======
->>>>>>> 5b120544aeae07bd6163f5eb772b1f954559b1e8
+IDEER:
+Gør så penge ikke kan komme over 99, måske en LED som viser at penge bliver spyttet ud igen
