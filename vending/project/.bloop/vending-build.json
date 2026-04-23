@@ -2,15 +2,15 @@
     "version": "1.4.0",
     "project": {
         "name": "vending-build",
-        "directory": "C:\\Users\\mikke\\OneDrive\\Desktop\\DTU\\02139 Digital Electronics 2\\vendingmachineproject\\02139-vending-machine\\vending\\project",
-        "workspaceDir": "C:\\Users\\mikke\\OneDrive\\Desktop\\DTU\\02139 Digital Electronics 2\\vendingmachineproject\\02139-vending-machine\\vending\\project",
+        "directory": "C:\\vendingmachineproject\\02139-vending-machine\\vending\\project",
+        "workspaceDir": "C:\\vendingmachineproject\\02139-vending-machine\\vending\\project",
         "sources": [
-            "C:\\Users\\mikke\\OneDrive\\Desktop\\DTU\\02139 Digital Electronics 2\\vendingmachineproject\\02139-vending-machine\\vending\\project\\src\\main\\scala",
-            "C:\\Users\\mikke\\OneDrive\\Desktop\\DTU\\02139 Digital Electronics 2\\vendingmachineproject\\02139-vending-machine\\vending\\project\\src\\main\\scala-2.12",
-            "C:\\Users\\mikke\\OneDrive\\Desktop\\DTU\\02139 Digital Electronics 2\\vendingmachineproject\\02139-vending-machine\\vending\\project\\src\\main\\scala-2",
-            "C:\\Users\\mikke\\OneDrive\\Desktop\\DTU\\02139 Digital Electronics 2\\vendingmachineproject\\02139-vending-machine\\vending\\project\\src\\main\\java",
-            "C:\\Users\\mikke\\OneDrive\\Desktop\\DTU\\02139 Digital Electronics 2\\vendingmachineproject\\02139-vending-machine\\vending\\project\\src\\main\\scala-sbt-1.0",
-            "C:\\Users\\mikke\\OneDrive\\Desktop\\DTU\\02139 Digital Electronics 2\\vendingmachineproject\\02139-vending-machine\\vending\\project\\target\\scala-2.12\\sbt-1.0\\src_managed\\main"
+            "C:\\vendingmachineproject\\02139-vending-machine\\vending\\project\\src\\main\\scala",
+            "C:\\vendingmachineproject\\02139-vending-machine\\vending\\project\\src\\main\\scala-2.12",
+            "C:\\vendingmachineproject\\02139-vending-machine\\vending\\project\\src\\main\\scala-2",
+            "C:\\vendingmachineproject\\02139-vending-machine\\vending\\project\\src\\main\\java",
+            "C:\\vendingmachineproject\\02139-vending-machine\\vending\\project\\src\\main\\scala-sbt-1.0",
+            "C:\\vendingmachineproject\\02139-vending-machine\\vending\\project\\target\\scala-2.12\\sbt-1.0\\src_managed\\main"
         ],
         "dependencies": [
             
@@ -104,11 +104,11 @@
             "C:\\Users\\mikke\\AppData\\Local\\Coursier\\Cache\\v1\\https\\repo1.maven.org\\maven2\\net\\java\\dev\\jna\\jna-platform\\5.12.0\\jna-platform-5.12.0.jar",
             "C:\\Users\\mikke\\AppData\\Local\\Coursier\\Cache\\v1\\https\\repo1.maven.org\\maven2\\com\\typesafe\\config\\1.4.2\\config-1.4.2.jar"
         ],
-        "out": "C:\\Users\\mikke\\OneDrive\\Desktop\\DTU\\02139 Digital Electronics 2\\vendingmachineproject\\02139-vending-machine\\vending\\project\\.bloop\\vending-build",
-        "classesDir": "C:\\Users\\mikke\\OneDrive\\Desktop\\DTU\\02139 Digital Electronics 2\\vendingmachineproject\\02139-vending-machine\\vending\\project\\.bloop\\vending-build\\scala-2.12\\sbt-1.0\\classes",
+        "out": "C:\\vendingmachineproject\\02139-vending-machine\\vending\\project\\.bloop\\vending-build",
+        "classesDir": "C:\\vendingmachineproject\\02139-vending-machine\\vending\\project\\.bloop\\vending-build\\scala-2.12\\sbt-1.0\\classes",
         "resources": [
-            "C:\\Users\\mikke\\OneDrive\\Desktop\\DTU\\02139 Digital Electronics 2\\vendingmachineproject\\02139-vending-machine\\vending\\project\\src\\main\\resources",
-            "C:\\Users\\mikke\\OneDrive\\Desktop\\DTU\\02139 Digital Electronics 2\\vendingmachineproject\\02139-vending-machine\\vending\\project\\target\\scala-2.12\\sbt-1.0\\resource_managed\\main"
+            "C:\\vendingmachineproject\\02139-vending-machine\\vending\\project\\src\\main\\resources",
+            "C:\\vendingmachineproject\\02139-vending-machine\\vending\\project\\target\\scala-2.12\\sbt-1.0\\resource_managed\\main"
         ],
         "scala": {
             "organization": "org.scala-lang",
@@ -215,7 +215,7 @@
             "config": {
                 "home": "C:\\Program Files\\Zulu\\zulu-21",
                 "options": [
-                    "-Duser.dir=C:\\Users\\mikke\\OneDrive\\Desktop\\DTU\\02139 Digital Electronics 2\\vendingmachineproject\\02139-vending-machine\\vending\\project"
+                    "-Duser.dir=C:\\vendingmachineproject\\02139-vending-machine\\vending\\project"
                 ]
             },
             "mainClass": [
@@ -224,11 +224,11 @@
             "runtimeConfig": {
                 "home": "C:\\Program Files\\Zulu\\zulu-21",
                 "options": [
-                    "-Duser.dir=C:\\Users\\mikke\\OneDrive\\Desktop\\DTU\\02139 Digital Electronics 2\\vendingmachineproject\\02139-vending-machine\\vending\\project"
+                    "-Duser.dir=C:\\vendingmachineproject\\02139-vending-machine\\vending\\project"
                 ]
             },
             "classpath": [
-                "C:\\Users\\mikke\\OneDrive\\Desktop\\DTU\\02139 Digital Electronics 2\\vendingmachineproject\\02139-vending-machine\\vending\\project\\.bloop\\vending-build\\scala-2.12\\sbt-1.0\\classes",
+                "C:\\vendingmachineproject\\02139-vending-machine\\vending\\project\\.bloop\\vending-build\\scala-2.12\\sbt-1.0\\classes",
                 "C:\\Users\\mikke\\AppData\\Local\\Coursier\\Cache\\v1\\https\\repo1.maven.org\\maven2\\ch\\epfl\\scala\\sbt-bloop_2.12_1.0\\2.0.19\\sbt-bloop_2.12_1.0-2.0.19.jar",
                 "C:\\Users\\mikke\\AppData\\Local\\Coursier\\Cache\\v1\\https\\repo1.maven.org\\maven2\\ch\\epfl\\scala\\bloop-config_2.12\\2.3.3\\bloop-config_2.12-2.3.3.jar",
                 "C:\\Users\\mikke\\AppData\\Local\\Coursier\\Cache\\v1\\https\\repo1.maven.org\\maven2\\com\\github\\plokhotnyuk\\jsoniter-scala\\jsoniter-scala-core_2.12\\2.13.5.2\\jsoniter-scala-core_2.12-2.13.5.2.jar",

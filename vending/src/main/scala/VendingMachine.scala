@@ -19,9 +19,21 @@ class VendingMachine(maxCount: Int) extends Module {
   val onesDigit = totalMoney % 10.U // right digit
   val tensDigit = (totalMoney / 10.U) % 10.U // left digit
   
+   // PRICE DECODER (Rema1000 prices) //
+  val itemPrice = Wire(UInt(8.W))
+  itemPrice := 0.U
+  switch(io.price) {
+    is(1.U) { itemPrice := 4.U} // Coca-Cola Can (Sale)
+    is(2.U) { itemPrice := 4.U} // Faxe Kondi Can (Sale) 
+    is(3.U) { itemPrice := 7.U} // Pepsi Can
+    is(4.U) { itemPrice := 17.U} // Coca-Cola Bottle
+    is(5.U) { itemPrice := 18.U} // Faxe Kondi Bottle
+  }
 
-  val priceOnes = io.price % 10.U
-  val priceTens = (io.price / 10.U) % 10.U
+  val priceOnes = itemPrice % 10.U
+  val priceTens = (itemPrice / 10.U) % 10.U
+
+ 
   
 
   // Timing Registers //
@@ -71,7 +83,7 @@ class VendingMachine(maxCount: Int) extends Module {
       }
 
       when(buyEdge) {
-        when(totalMoney >= io.price) {
+        when(totalMoney >= itemPrice) {
           signalSub := true.B
           stateReg := busy
         } .otherwise {
@@ -99,7 +111,7 @@ class VendingMachine(maxCount: Int) extends Module {
   } .elsewhen(signalCoin5) {
     totalMoney := totalMoney + 5.U
   } .elsewhen(signalSub) {
-    totalMoney := totalMoney - io.price
+    totalMoney := totalMoney - itemPrice
   }
 
   // SEVEN SEGMENT DISPLAY LOGIC //
@@ -109,13 +121,15 @@ class VendingMachine(maxCount: Int) extends Module {
     selReg := selReg + 1.U
   }
  
+  val blinkDuringAlarm = (stateReg === alarm) && !blinkReg
+
   switch(selReg) {
     is(0.U) {
-      activeDigit := "b0111".U
+      activeDigit := Mux(blinkDuringAlarm, "b1111".U, "b0111".U)
       sevSegDecoder.io.in := tensDigit
     }
     is(1.U) {
-      activeDigit := "b1011".U
+      activeDigit := Mux(blinkDuringAlarm, "b1111".U, "b1011".U)
       sevSegDecoder.io.in := onesDigit
     }
     is(2.U) {
@@ -128,15 +142,11 @@ class VendingMachine(maxCount: Int) extends Module {
     }
   }
 
-  val displayMux  = WireDefault(activeDigit)
-  when(stateReg === alarm && !blinkReg) {
-    displayMux := "b1111".U
-  }
 
 
   /////# OUTPUT ASSIGNMENTS #/////
   io.seg := ~sevSegDecoder.io.out      
-  io.an  := displayMux     
+  io.an  := activeDigit     
   io.releaseCan := (stateReg === busy)
   io.alarm := (stateReg === alarm) && blinkReg
 
