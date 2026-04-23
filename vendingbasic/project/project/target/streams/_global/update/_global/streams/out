@@ -1,3 +1,3 @@
-[debug] not up to date. inChanged = true, force = false
-[debug] Updating ProjectRef(uri("file:/C:/Users/mikke/OneDrive/Desktop/DTU/02112%20Embedded%20systems%20programming/02139-vending-machine/vending/project/project/"), "vending-build-build")...
-[debug] Done updating ProjectRef(uri("file:/C:/Users/mikke/OneDrive/Desktop/DTU/02112%20Embedded%20systems%20programming/02139-vending-machine/vending/project/project/"), "vending-build-build")
+[0m[[0m[0mdebug[0m] [0m[0mnot up to date. inChanged = true, force = false[0m
+[0m[[0m[0mdebug[0m] [0m[0mUpdating ProjectRef(uri("file:/C:/vendingmachineproject/02139-vending-machine/vendingbasic/project/project/"), "vendingbasic-build-build")...[0m
+[0m[[0m[0mdebug[0m] [0m[0mDone updating ProjectRef(uri("file:/C:/vendingmachineproject/02139-vending-machine/vendingbasic/project/project/"), "vendingbasic-build-build")[0m
