@@ -40,8 +40,6 @@ class VendingMachine(maxCount: Int) extends Module {
   val priceOnes = itemPrice % 10.U
   val priceTens = (itemPrice / 10.U) % 10.U
 
- 
-  
 
   // Timing Registers //
   val blinkFreq = 25000000.U
