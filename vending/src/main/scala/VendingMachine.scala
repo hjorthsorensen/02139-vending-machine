@@ -18,16 +18,23 @@ class VendingMachine(maxCount: Int) extends Module {
   val totalMoney = RegInit(0.U(8.W)) // 8 bits, 0 to 99
   val onesDigit = totalMoney % 10.U // right digit
   val tensDigit = (totalMoney / 10.U) % 10.U // left digit
-  
+  when (totalMoney > 99.U) {
+    totalMoney := 99.U
+  }
+
    // PRICE DECODER (Rema1000 prices) //
   val itemPrice = Wire(UInt(8.W))
   itemPrice := 0.U
   switch(io.price) {
-    is(1.U) { itemPrice := 4.U} // Coca-Cola Can (Sale)
-    is(2.U) { itemPrice := 4.U} // Faxe Kondi Can (Sale) 
-    is(3.U) { itemPrice := 7.U} // Pepsi Can
-    is(4.U) { itemPrice := 17.U} // Coca-Cola Bottle
-    is(5.U) { itemPrice := 18.U} // Faxe Kondi Bottle
+    is(1.U) { itemPrice := 4.U } // Coca-Cola Can (Sale)
+    is(2.U) { itemPrice := 4.U } // Faxe Kondi Can (Sale) 
+    is(3.U) { itemPrice := 7.U } // Pepsi Can
+    is(4.U) { itemPrice := 17.U } // Coca-Cola Bottle
+    is(5.U) { itemPrice := 18.U } // Faxe Kondi Bottle
+    is(6.U) { itemPrice := 20.U } // Pepsi Bottle
+    is(7.U) { itemPrice := 14.U } // Monster Energi (sale)
+    is(8.U) { itemPrice := 10.U } // Red Bull (sale)
+    is(9.U) { itemPrice := 17.U } // Booster
   }
 
   val priceOnes = itemPrice % 10.U
