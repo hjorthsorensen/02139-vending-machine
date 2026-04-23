@@ -18,9 +18,8 @@ class VendingMachine(maxCount: Int) extends Module {
   val totalMoney = RegInit(0.U(8.W)) // 8 bits, 0 to 99
   val onesDigit = totalMoney % 10.U // right digit
   val tensDigit = (totalMoney / 10.U) % 10.U // left digit
-  when (totalMoney > 99.U) {
-    totalMoney := 99.U
-  }
+  val coinRejected = WireDefault(false.B)
+
 
    // PRICE DECODER (Rema1000 prices) //
   val itemPrice = Wire(UInt(8.W))
@@ -95,6 +94,9 @@ class VendingMachine(maxCount: Int) extends Module {
           stateReg := alarm
         }
       }
+      when(coinRejected) {
+        stateReg := alarm
+      }
     }
     is(busy) {
       when(io.buy) {
@@ -104,7 +106,7 @@ class VendingMachine(maxCount: Int) extends Module {
       }
     }
     is(alarm) {
-        when(!io.buy) {
+        when(!io.buy && !io.coin2 && !io.coin5) {
           stateReg := idle
         }
     }
@@ -112,9 +114,17 @@ class VendingMachine(maxCount: Int) extends Module {
   
   // MONEY UPDATE LOGIC //
   when(signalCoin2) {
-    totalMoney := totalMoney + 2.U
+    when(totalMoney <= 97.U) { 
+      totalMoney := totalMoney + 2.U
+    } .otherwise {
+      coinRejected := true.B
+    }
   } .elsewhen(signalCoin5) {
-    totalMoney := totalMoney + 5.U
+    when(totalMoney <= 94.U) { 
+      totalMoney := totalMoney + 5.U
+    } .otherwise {
+      coinRejected := true.B 
+    }
   } .elsewhen(signalSub) {
     totalMoney := totalMoney - itemPrice
   }

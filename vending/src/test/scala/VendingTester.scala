@@ -72,7 +72,7 @@ class VendingTester extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.buy.poke(false.B)
       dut.clock.step(1)
       dut.io.releaseCan.expect(false.B)
-      
+    
       
       println("Test completed successfully.")
     }
