@@ -62,13 +62,16 @@ class VendingMachine(maxCount: Int) extends Module {
 
  /////# FSM LOGIC #/////
 
-  // STATE DEFINITIONS //
-  val idle :: busy :: alarm :: Nil = Enum(3)
-  val stateReg = RegInit(idle)
-  
-  val signalCoin2 = WireDefault(false.B)
-  val signalCoin5 = WireDefault(false.B)
-  val signalSub  = WireDefault(false.B)
+  val fsm = Module(new VendingFSM())
+  fsm.io.coin2Edge := coin2Edge
+  fsm.io.coin5Edge := coin5Edge
+  fsm.io.buyEdge   := buyEdge
+  fsm.io.buy       := io.buy
+  fsm.io.coin2     := io.coin2
+  fsm.io.coin5     := io.coin5
+  fsm.io.totalMoney := totalMoney
+  fsm.io.itemPrice := itemPrice
+  fsm.io.coinRejected := coinRejected
 
   // ALARM TOGGLE LOGIC //
 
@@ -77,55 +80,21 @@ class VendingMachine(maxCount: Int) extends Module {
     blinkCounter := 0.U
     blinkReg := !blinkReg
   }
-
-  switch(stateReg) {
-    is(idle) {
-      when(coin2Edge) {
-        signalCoin2 := true.B
-      } .elsewhen(coin5Edge) {
-        signalCoin5 := true.B
-      }
-
-      when(buyEdge) {
-        when(totalMoney >= itemPrice) {
-          signalSub := true.B
-          stateReg := busy
-        } .otherwise {
-          stateReg := alarm
-        }
-      }
-      when(coinRejected) {
-        stateReg := alarm
-      }
-    }
-    is(busy) {
-      when(io.buy) {
-        stateReg := busy
-      } .otherwise {
-        stateReg := idle
-      }
-    }
-    is(alarm) {
-        when(!io.buy && !io.coin2 && !io.coin5) {
-          stateReg := idle
-        }
-    }
-  }
   
   // MONEY UPDATE LOGIC //
-  when(signalCoin2) {
+  when(fsm.io.signalCoin2) {
     when(totalMoney <= 97.U) { 
       totalMoney := totalMoney + 2.U
     } .otherwise {
       coinRejected := true.B
     }
-  } .elsewhen(signalCoin5) {
+  } .elsewhen(fsm.io.signalCoin5) {
     when(totalMoney <= 94.U) { 
       totalMoney := totalMoney + 5.U
     } .otherwise {
       coinRejected := true.B 
     }
-  } .elsewhen(signalSub) {
+  } .elsewhen(fsm.io.signalSub) {
     totalMoney := totalMoney - itemPrice
   }
 
@@ -136,7 +105,7 @@ class VendingMachine(maxCount: Int) extends Module {
     selReg := selReg + 1.U
   }
  
-  val blinkDuringAlarm = (stateReg === alarm) && !blinkReg
+  val blinkDuringAlarm = fsm.io.alarm && !blinkReg
 
   switch(selReg) {
     is(0.U) {
@@ -162,10 +131,13 @@ class VendingMachine(maxCount: Int) extends Module {
   /////# OUTPUT ASSIGNMENTS #/////
   io.seg := ~sevSegDecoder.io.out      
   io.an  := activeDigit     
-  io.releaseCan := (stateReg === busy)
-  io.alarm := (stateReg === alarm) && blinkReg
+  io.releaseCan := fsm.io.releaseCan
+  io.alarm := fsm.io.alarm && blinkReg
 
 }
+
+
+
 
 // generate Verilog
 object VendingMachine extends App {
