@@ -1,14 +1,27 @@
-# Scala/SBT build folders
+# --- Scala / SBT / Chisel ---
+target/
+project/target/
+project/project/
 vending/target/
 vending/project/target/
 vending/project/project/
-.metals/
-
-# Metals/Bloop IDE folders (The cause of your error!)
-vending/.bloop/
-vending/.metals/
-vending/.settings/
-
-# Waveform files
-*.vcd
 test_run_dir/
+*.vcd
+
+# --- IDEs (Metals, Bloop, VS Code) ---
+.metals/
+.bloop/
+.bsp/
+.settings/
+.vscode/
+*.swp
+*.swo
+
+# --- Vivado / FPGA Tools ---
+*.log
+*.jou
+*.str
+*.pb
+.Xil/
+vending/.Xil/
+usage_statistics_webtalk.*
