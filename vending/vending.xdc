@@ -27,7 +27,7 @@ set_property PACKAGE_PIN W15 [get_ports {io_price[4]}]
 
 ## LEDs
 set_property PACKAGE_PIN U16 [get_ports {io_alarm}]
-#set_property PACKAGE_PIN E19 [get_ports {led[1]}]
+#set_property PACKAGE_PIN E19 [get_ports {io.releaseCoinLED}]
 #set_property PACKAGE_PIN U19 [get_ports {led[2]}]
 #set_property PACKAGE_PIN V19 [get_ports {led[3]}]
 #set_property PACKAGE_PIN W18 [get_ports {led[4]}]
