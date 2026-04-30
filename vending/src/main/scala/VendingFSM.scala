@@ -12,7 +12,7 @@ class VendingFSM extends Module {
     val coin5        = Input(Bool())
     val totalMoney   = Input(UInt(8.W))
     val itemPrice    = Input(UInt(8.W))
-    val coinRejected = Input(Bool())
+  
 
     // Outputs
     val signalCoin2  = Output(Bool())
@@ -20,14 +20,17 @@ class VendingFSM extends Module {
     val signalSub    = Output(Bool())
     val releaseCan   = Output(Bool())
     val alarm        = Output(Bool())
+    val coinBeingRejected = Output(Bool())
   })
 
-  val idle :: busy :: coinRejected :: alarm :: Nil = Enum(4)
+  val idle :: busy :: rejectCoin :: alarm :: Nil = Enum(4)
   val stateReg = RegInit(idle)
 
   io.signalCoin2 := false.B
   io.signalCoin5 := false.B
   io.signalSub   := false.B
+  io.alarm := false.B
+  io.coinBeingRejected := false.B
 
   switch(stateReg) {
     is(idle) {
@@ -46,8 +49,8 @@ class VendingFSM extends Module {
         }
       }
       
-      when(io.coinRejected) {
-        stateReg := coinRejected
+      when(io.coinBeingRejected) {
+        stateReg := rejectCoin
       }
     }
     
@@ -55,7 +58,7 @@ class VendingFSM extends Module {
       stateReg := Mux(io.buy, busy, idle)
     }
     
-    is(coinRejected) {
+    is(rejectCoin) {
       when(!io.coin2 && !io.coin5) {
         stateReg := idle
       }
@@ -70,5 +73,5 @@ class VendingFSM extends Module {
   // State-based Outputs
   io.releaseCan := (stateReg === busy)
   io.alarm      := (stateReg === alarm)
-  io.coinRejected := (stateReg === coinRejected)
+  io.coinBeingRejected := (stateReg === rejectCoin)
 }

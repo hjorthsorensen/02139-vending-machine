@@ -9,6 +9,7 @@ class VendingMachine(maxCount: Int) extends Module {
     val buy = Input(Bool())
     val releaseCan = Output(Bool())
     val alarm = Output(Bool())
+    val rejectCoinLED = Output(Bool())
     val seg = Output(UInt(7.W))
     val an = Output(UInt(4.W))
   })
@@ -71,7 +72,7 @@ class VendingMachine(maxCount: Int) extends Module {
   fsm.io.coin5     := io.coin5
   fsm.io.totalMoney := totalMoney
   fsm.io.itemPrice := itemPrice
-  fsm.io.coinRejected := coinRejected
+  fsm.io.coinBeingRejected := coinRejected
 
   // ALARM TOGGLE LOGIC //
 
@@ -133,6 +134,7 @@ class VendingMachine(maxCount: Int) extends Module {
   io.an  := activeDigit     
   io.releaseCan := fsm.io.releaseCan
   io.alarm := fsm.io.alarm && blinkReg
+  io.rejectCoinLED := fsm.io.coinBeingRejected && blinkReg
 
 }
 
