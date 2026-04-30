@@ -2,6 +2,7 @@
 vending/target/
 vending/project/target/
 vending/project/project/
+.metals/
 
 # Metals/Bloop IDE folders (The cause of your error!)
 vending/.bloop/
