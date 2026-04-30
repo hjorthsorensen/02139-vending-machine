@@ -15,6 +15,7 @@ class VendingMachine(maxCount: Int) extends Module {
   })
 
   /////# DATAPATH LOGIC #/////
+
   //  REGISTERS & LOGIC //
   val totalMoney = RegInit(0.U(8.W)) // 8 bits, 0 to 99
   val onesDigit = totalMoney % 10.U // right digit
@@ -51,14 +52,35 @@ class VendingMachine(maxCount: Int) extends Module {
   val selReg = RegInit(0.U(2.W))
 
   // EDGE DETECTORS //
-  val coin2Edge = io.coin2 && !RegNext(io.coin2)
-  val coin5Edge = io.coin5 && !RegNext(io.coin5)
-  val buyEdge   = io.buy   && !RegNext(io.buy)
+  // guds gave )))
+  def risingEdge(signal: Bool): Bool = signal && !RegNext(signal)
+  val coin2Edge = risingEdge(io.coin2)
+  val coin5Edge = risingEdge(io.coin5)
+  val buyEdge   = risingEdge(io.buy)
 
   // SEVEN SEGMENT DECODER //
   val sevSegDecoder = Module(new SevenSegDec())
   val activeDigit = WireDefault("b1111".U)
   sevSegDecoder.io.in := 0.U
+
+  // Alarm for coin rejection, just faster than blink so you can tell them apart
+  val rejectFreq = 6250000.U 
+  val rejectCounter = RegInit(0.U(32.W))
+  val rejectReg = RegInit(false.B)
+
+  rejectCounter := rejectCounter + 1.U
+  when(rejectCounter === rejectFreq) {
+    rejectCounter := 0.U
+    rejectReg := !rejectReg
+  }
+
+   // ALARM TOGGLE LOGIC //
+
+  blinkCounter := blinkCounter + 1.U
+  when(blinkCounter === blinkFreq) {
+    blinkCounter := 0.U
+    blinkReg := !blinkReg
+  }
 
 
  /////# FSM LOGIC #/////
@@ -72,29 +94,25 @@ class VendingMachine(maxCount: Int) extends Module {
   fsm.io.coin5     := io.coin5
   fsm.io.totalMoney := totalMoney
   fsm.io.itemPrice := itemPrice
-  fsm.io.inpCoinBeingRej := false.B
-  // fsm.io.coinBeingRejected := coinRejected
 
-  // ALARM TOGGLE LOGIC //
-
-  blinkCounter := blinkCounter + 1.U
-  when(blinkCounter === blinkFreq) {
-    blinkCounter := 0.U
-    blinkReg := !blinkReg
-  }
+ 
   
+
   // MONEY UPDATE LOGIC //
+  val rejectNext = WireDefault(false.B)
+  fsm.io.inpCoinBeingRej := RegNext(rejectNext, false.B)
+
   when(fsm.io.signalCoin2) {
     when(totalMoney <= 97.U) { 
       totalMoney := totalMoney + 2.U
     } .otherwise {
-      fsm.io.inpCoinBeingRej := true.B
+      rejectNext := true.B
     }
   } .elsewhen(fsm.io.signalCoin5) {
     when(totalMoney <= 94.U) { 
       totalMoney := totalMoney + 5.U
     } .otherwise {
-      fsm.io.inpCoinBeingRej := true.B 
+      rejectNext := true.B
     }
   } .elsewhen(fsm.io.signalSub) {
     totalMoney := totalMoney - itemPrice
@@ -135,7 +153,7 @@ class VendingMachine(maxCount: Int) extends Module {
   io.an  := activeDigit     
   io.releaseCan := fsm.io.releaseCan
   io.alarm := fsm.io.alarm && blinkReg
-  io.rejectCoinLED := fsm.io.coinBeingRejected && blinkReg
+  io.rejectCoinLED := fsm.io.coinBeingRejected && rejectReg
 
 }
 
