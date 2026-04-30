@@ -2703,3 +2703,7 @@ java.lang.IndexOutOfBoundsException: -1 is out of bounds (min 0, max 2)
 2026.04.30 11:05:25 INFO  time: compiled vending in 37s[0m
 Apr 30, 2026 11:11:37 AM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
 INFO: Unsupported notification method: $/setTrace
+2026.04.30 11:18:46 INFO  compiling vending (1 scala source)[0m
+2026.04.30 11:18:56 INFO  time: compiled vending in 9.32s[0m
+2026.04.30 11:18:56 INFO  compiling vending (1 scala source)[0m
+2026.04.30 11:19:01 INFO  time: compiled vending in 4.83s[0m
