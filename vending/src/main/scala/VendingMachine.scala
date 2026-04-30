@@ -72,7 +72,8 @@ class VendingMachine(maxCount: Int) extends Module {
   fsm.io.coin5     := io.coin5
   fsm.io.totalMoney := totalMoney
   fsm.io.itemPrice := itemPrice
-  fsm.io.coinBeingRejected := coinRejected
+  fsm.io.inpCoinBeingRej := false.B
+  // fsm.io.coinBeingRejected := coinRejected
 
   // ALARM TOGGLE LOGIC //
 
@@ -87,13 +88,13 @@ class VendingMachine(maxCount: Int) extends Module {
     when(totalMoney <= 97.U) { 
       totalMoney := totalMoney + 2.U
     } .otherwise {
-      coinRejected := true.B
+      fsm.io.inpCoinBeingRej := true.B
     }
   } .elsewhen(fsm.io.signalCoin5) {
     when(totalMoney <= 94.U) { 
       totalMoney := totalMoney + 5.U
     } .otherwise {
-      coinRejected := true.B 
+      fsm.io.inpCoinBeingRej := true.B 
     }
   } .elsewhen(fsm.io.signalSub) {
     totalMoney := totalMoney - itemPrice

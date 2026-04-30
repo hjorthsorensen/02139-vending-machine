@@ -12,6 +12,7 @@ class VendingFSM extends Module {
     val coin5        = Input(Bool())
     val totalMoney   = Input(UInt(8.W))
     val itemPrice    = Input(UInt(8.W))
+    val inpCoinBeingRej = Input(Bool())
   
 
     // Outputs
@@ -31,6 +32,7 @@ class VendingFSM extends Module {
   io.signalSub   := false.B
   io.alarm := false.B
   io.coinBeingRejected := false.B
+  
 
   switch(stateReg) {
     is(idle) {
@@ -49,7 +51,7 @@ class VendingFSM extends Module {
         }
       }
       
-      when(io.coinBeingRejected) {
+      when(io.inpCoinBeingRej) {
         stateReg := rejectCoin
       }
     }
