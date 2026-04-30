@@ -2485,6 +2485,7 @@ WARNING: Unmatched cancel notification for request id 4091
 2026.04.24 21:28:14 INFO  shutting down Metals
 2026.04.24 21:28:14 INFO  Shut down connection with build server.
 2026.04.24 21:28:14 INFO  Exiting server
+<<<<<<< HEAD
 2026.04.30 12:40:34 INFO  Started: Metals version 1.6.7 in folders '/home/christianbentzen/DTU/2-Semester/Digital-Elektronik-2/02139-vending-machine' for client Visual Studio Code 1.117.0.[0m
 2026.04.30 12:40:34 INFO  Memory monitor started[0m
 2026.04.30 12:40:34 WARN  Using H2 2.4.240 which is newer than the version Flyway has been verified with. The latest verified version of H2 is 2.3.232.[0m
@@ -2713,3 +2714,223 @@ INFO: Unsupported notification method: $/setTrace
 2026.04.30 13:12:41 INFO  no build target found for /home/christianbentzen/DTU/2-Semester/Digital-Elektronik-2/02139-vending-machine/vending/src/main/scala/VendingMachine.scala. Using presentation compiler with project's scala-library version: 3.3.7[0m
 2026.04.30 13:12:41 INFO  no build target found for /home/christianbentzen/DTU/2-Semester/Digital-Elektronik-2/02139-vending-machine/vending/src/main/scala/VendingMachine.scala. Using presentation compiler with project's scala-library version: 3.3.7[0m
 2026.04.30 13:12:41 INFO  no build target found for /home/christianbentzen/DTU/2-Semester/Digital-Elektronik-2/02139-vending-machine/vending/src/main/scala/VendingMachine.scala. Using presentation compiler with project's scala-library version: 3.3.7[0m
+=======
+2026.04.30 10:29:35 INFO  Started: Metals version 1.6.7 in folders 'C:\vendingmachineproject\02139-vending-machine' for client Visual Studio Code 1.117.0.[0m
+2026.04.30 10:29:35 INFO  Memory monitor started[0m
+2026.04.30 10:29:36 WARN  Using H2 2.4.240 which is newer than the version Flyway has been verified with. The latest verified version of H2 is 2.3.232.[0m
+2026.04.30 10:29:36 INFO  no build target found for C:\vendingmachineproject\02139-vending-machine\vending\src\main\scala\VendingMachine.scala. Using presentation compiler with project's scala-library version: 3.3.7[0m
+2026.04.30 10:29:40 INFO  no build target found for C:\vendingmachineproject\02139-vending-machine\vending\src\main\scala\VendingMachine.scala. Using presentation compiler with project's scala-library version: 3.3.7[0m
+2026.04.30 10:29:40 INFO  no build target found for C:\vendingmachineproject\02139-vending-machine\vending\src\main\scala\VendingMachine.scala. Using presentation compiler with project's scala-library version: 3.3.7[0m
+Apr 30, 2026 10:29:40 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7
+2026.04.30 10:29:40 INFO  no build target found for C:\vendingmachineproject\02139-vending-machine\vending\src\main\scala\VendingMachine.scala. Using presentation compiler with project's scala-library version: 3.3.7[0m
+Apr 30, 2026 10:29:41 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 9
+2026.04.30 10:29:40 INFO  no build target found for C:\vendingmachineproject\02139-vending-machine\vending\src\main\scala\VendingMachine.scala. Using presentation compiler with project's scala-library version: 3.3.7[0m
+Apr 30, 2026 10:29:41 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 8
+2026.04.30 10:29:40 INFO  no build target found for C:\vendingmachineproject\02139-vending-machine\vending\src\main\scala\VendingMachine.scala. Using presentation compiler with project's scala-library version: 3.3.7[0m
+Apr 30, 2026 10:29:41 AM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
+Apr 30, 2026 10:29:41 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 13
+2026.04.30 10:29:41 INFO  no build target found for C:\vendingmachineproject\02139-vending-machine\vending\src\main\scala\VendingMachine.scala. Using presentation compiler with project's scala-library version: 3.3.7[0m
+2026.04.30 10:29:41 INFO  Attempting to connect to the build server...[0m
+2026.04.30 10:29:41 INFO  no build target found for C:\vendingmachineproject\02139-vending-machine\vending\src\main\scala\VendingMachine.scala. Using presentation compiler with project's scala-library version: 3.3.7[0m
+Apr 30, 2026 10:29:42 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 12
+Apr 30, 2026 10:29:42 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 16
+2026.04.30 10:29:41 INFO  no build target found for C:\vendingmachineproject\02139-vending-machine\vending\src\main\scala\VendingMachine.scala. Using presentation compiler with project's scala-library version: 3.3.7[0m
+Apr 30, 2026 10:29:42 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 17
+Apr 30, 2026 10:29:42 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 18
+Apr 30, 2026 10:29:42 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 19
+2026.04.30 10:29:41 INFO  no build target found for C:\vendingmachineproject\02139-vending-machine\vending\src\main\scala\VendingFSM.scala. Using presentation compiler with project's scala-library version: 3.3.7[0m
+2026.04.30 10:29:41 INFO  No running Bloop server found, starting one.[0m
+Apr 30, 2026 10:29:42 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 20
+2026.04.30 10:29:42 INFO  no build target found for C:\vendingmachineproject\02139-vending-machine\vending\src\main\scala\VendingFSM.scala. Using presentation compiler with project's scala-library version: 3.3.7[0m
+2026.04.30 10:29:41 INFO  no build target found for C:\vendingmachineproject\02139-vending-machine\vending\src\main\scala\VendingFSM.scala. Using presentation compiler with project's scala-library version: 3.3.7[0m
+2026.04.30 10:29:44 INFO  no build target found for C:\vendingmachineproject\02139-vending-machine\vending\src\main\scala\VendingFSM.scala. Using presentation compiler with project's scala-library version: 3.3.7[0m
+2026.04.30 10:29:44 INFO  Starting compilation server[0m
+2026.04.30 10:29:44 INFO  no build target found for C:\vendingmachineproject\02139-vending-machine\vending\src\main\scala\VendingFSM.scala. Using presentation compiler with project's scala-library version: 3.3.7[0m
+2026.04.30 10:29:46 INFO  no build target found for C:\vendingmachineproject\02139-vending-machine\vending\src\main\scala\VendingFSM.scala. Using presentation compiler with project's scala-library version: 3.3.7[0m
+2026.04.30 10:29:46 INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at C:\vendingmachineproject\02139-vending-machine\.metals\bsp.trace.json or C:\Users\mikke\AppData\Local\scalameta\metals\cache\bsp.trace.json[0m
+2026.04.30 10:29:46 INFO  no build target found for C:\vendingmachineproject\02139-vending-machine\vending\src\main\scala\VendingFSM.scala. Using presentation compiler with project's scala-library version: 3.3.7[0m
+2026.04.30 10:29:50 INFO  no build target found for C:\vendingmachineproject\02139-vending-machine\vending\src\main\scala\VendingFSM.scala. Using presentation compiler with project's scala-library version: 3.3.7[0m
+2026.04.30 10:29:53 INFO  no build target found for C:\vendingmachineproject\02139-vending-machine\vending\src\main\scala\VendingFSM.scala. Using presentation compiler with project's scala-library version: 3.3.7[0m
+2026.04.30 10:29:55 INFO  time: Connected to build server in 13s[0m
+2026.04.30 10:29:55 INFO  Connected to Build server: Bloop v2.0.19[0m
+2026.04.30 10:29:55 INFO  time: Imported build in 0.29s[0m
+2026.04.30 10:29:55 WARN  2.13.14 is no longer supported in the current Metals versions, using the last known supported version 1.6.3[0m
+2026.04.30 10:30:01 WARN  Using H2 2.4.240 which is newer than the version Flyway has been verified with. The latest verified version of H2 is 2.3.232.[0m
+2026.04.30 10:30:03 INFO  time: indexed workspace in 8.02s[0m
+2026.04.30 10:30:04 INFO  compiling vending (3 scala sources)[0m
+Apr 30, 2026 10:30:11 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 40
+Apr 30, 2026 10:30:12 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 42
+2026.04.30 10:30:16 INFO  time: compiled vending in 11s[0m
+2026.04.30 10:30:16 INFO  compiling vending-test (2 scala sources)[0m
+2026.04.30 10:30:22 INFO  time: compiled vending-test in 6.14s[0m
+Apr 30, 2026 10:31:09 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 129
+Apr 30, 2026 10:31:12 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 143
+Apr 30, 2026 10:31:12 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 144
+Apr 30, 2026 10:31:13 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 154
+Apr 30, 2026 10:31:29 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 245
+Apr 30, 2026 10:31:40 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 301
+Apr 30, 2026 10:32:18 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 397
+Apr 30, 2026 10:32:19 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 402
+Apr 30, 2026 10:32:19 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 412
+Apr 30, 2026 10:32:21 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 434
+Apr 30, 2026 10:34:47 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 664
+Apr 30, 2026 10:36:15 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 1069
+Apr 30, 2026 10:36:15 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 1070
+Apr 30, 2026 10:36:15 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 1071
+Apr 30, 2026 10:36:15 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 1072
+Apr 30, 2026 10:36:15 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 1073
+Apr 30, 2026 10:39:29 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 1244
+Apr 30, 2026 10:39:30 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 1258
+Apr 30, 2026 10:39:30 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 1264
+Apr 30, 2026 10:39:31 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 1278
+Apr 30, 2026 10:39:31 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 1282
+Apr 30, 2026 10:39:32 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 1296
+Apr 30, 2026 10:41:19 AM scala.meta.internal.pc.CompletionItemResolver fullDocstring
+WARNING: Error getting docstring for value blinkCounter
+java.lang.IndexOutOfBoundsException: -1 is out of bounds (min 0, max 2)
+	at scala.collection.mutable.ArrayBuffer.apply(ArrayBuffer.scala:102)
+	at scala.reflect.internal.Types$Type.findMemberInternal$1(Types.scala:1030)
+	at scala.reflect.internal.Types$Type.findMember(Types.scala:1035)
+	at scala.reflect.internal.Types$Type.memberBasedOnName(Types.scala:661)
+	at scala.reflect.internal.Types$Type.nonPrivateMember(Types.scala:632)
+	at scala.tools.nsc.typechecker.Implicits$ImplicitSearch.$anonfun$checkCompatibility$1(Implicits.scala:774)
+	at scala.tools.nsc.typechecker.Implicits$ImplicitSearch.$anonfun$checkCompatibility$1$adapted(Implicits.scala:774)
+	at scala.collection.IterableOnceOps.exists(IterableOnce.scala:647)
+	at scala.collection.IterableOnceOps.exists$(IterableOnce.scala:644)
+	at scala.collection.AbstractIterator.exists(Iterator.scala:1303)
+	at scala.tools.nsc.typechecker.Implicits$ImplicitSearch.loop$3(Implicits.scala:774)
+	at scala.tools.nsc.typechecker.Implicits$ImplicitSearch.checkCompatibility(Implicits.scala:780)
+	at scala.tools.nsc.typechecker.Implicits$ImplicitSearch.isPlausiblyCompatible(Implicits.scala:479)
+	at scala.tools.nsc.typechecker.Implicits$ImplicitSearch$ImplicitComputation.survives(Implicits.scala:1052)
+	at scala.tools.nsc.typechecker.Implicits$ImplicitSearch$ImplicitComputation.eligibleNew(Implicits.scala:1131)
+	at scala.tools.nsc.typechecker.Implicits$ImplicitSearch$ImplicitComputation.<init>(Implicits.scala:1185)
+	at scala.tools.nsc.typechecker.Implicits$ImplicitSearch.searchImplicit(Implicits.scala:1319)
+	at scala.tools.nsc.typechecker.Implicits$ImplicitSearch.bestImplicit(Implicits.scala:1716)
+	at scala.tools.nsc.typechecker.Implicits.inferImplicit1(Implicits.scala:112)
+	at scala.tools.nsc.typechecker.Implicits.inferImplicit(Implicits.scala:91)
+	at scala.tools.nsc.typechecker.Implicits.inferImplicit$(Implicits.scala:88)
+	at scala.meta.internal.pc.MetalsGlobal$MetalsInteractiveAnalyzer.inferImplicit(MetalsGlobal.scala:85)
+	at scala.tools.nsc.typechecker.Implicits.inferImplicitView(Implicits.scala:50)
+	at scala.tools.nsc.typechecker.Implicits.inferImplicitView$(Implicits.scala:49)
+	at scala.meta.internal.pc.MetalsGlobal$MetalsInteractiveAnalyzer.inferImplicitView(MetalsGlobal.scala:85)
+	at scala.tools.nsc.typechecker.Typers$Typer.inferView(Typers.scala:332)
+	at scala.tools.nsc.typechecker.Typers$Typer.adaptToMember(Typers.scala:1416)
+	at scala.tools.nsc.typechecker.Typers$Typer.$anonfun$adaptToMemberWithArgs$6(Typers.scala:1469)
+	at scala.tools.nsc.typechecker.Typers$Typer.silent(Typers.scala:727)
+	at scala.tools.nsc.typechecker.Typers$Typer.adaptToMemberWithArgs(Typers.scala:1469)
+	at scala.tools.nsc.typechecker.Typers$Typer.typedSelect$1(Typers.scala:5454)
+	at scala.tools.nsc.typechecker.Typers$Typer.typedSelectOrSuperCall$1(Typers.scala:5604)
+	at scala.tools.nsc.typechecker.Typers$Typer.typed1(Typers.scala:6206)
+	at scala.tools.nsc.typechecker.Typers$Typer.typed(Typers.scala:6261)
+	at scala.tools.nsc.typechecker.Typers$Typer.$anonfun$typed1$41(Typers.scala:5233)
+	at scala.tools.nsc.typechecker.Typers$Typer.silent(Typers.scala:713)
+	at scala.tools.nsc.typechecker.Typers$Typer.normalTypedApply$1(Typers.scala:5235)
+	at scala.tools.nsc.typechecker.Typers$Typer.typedApply$1(Typers.scala:5267)
+	at scala.tools.nsc.typechecker.Typers$Typer.typed1(Typers.scala:6205)
+	at scala.tools.nsc.typechecker.Typers$Typer.typed(Typers.scala:6261)
+	at scala.tools.nsc.typechecker.Typers$Typer.typedArg(Typers.scala:3557)
+	at scala.tools.nsc.typechecker.Typers$Typer.handlePolymorphicCall$1(Typers.scala:3961)
+	at scala.tools.nsc.typechecker.Typers$Typer.doTypedApply(Typers.scala:3980)
+	at scala.tools.nsc.typechecker.Typers$Typer.$anonfun$typed1$28(Typers.scala:5166)
+	at scala.tools.nsc.typechecker.Typers$Typer.silent(Typers.scala:713)
+	at scala.tools.nsc.typechecker.Typers$Typer.tryTypedApply$1(Typers.scala:5166)
+	at scala.tools.nsc.typechecker.Typers$Typer.normalTypedApply$1(Typers.scala:5254)
+	at scala.tools.nsc.typechecker.Typers$Typer.typedApply$1(Typers.scala:5267)
+	at scala.tools.nsc.typechecker.Typers$Typer.typed1(Typers.scala:6205)
+	at scala.tools.nsc.typechecker.Typers$Typer.typed(Typers.scala:6261)
+	at scala.tools.nsc.typechecker.Typers$Typer.computeType(Typers.scala:6350)
+	at scala.tools.nsc.typechecker.Namers$Namer.assignTypeToTree(Namers.scala:1105)
+	at scala.tools.nsc.typechecker.Namers$Namer.inferredValTpt$1(Namers.scala:1752)
+	at scala.tools.nsc.typechecker.Namers$Namer.valDefSig(Namers.scala:1765)
+	at scala.tools.nsc.typechecker.Namers$Namer.memberSig(Namers.scala:1953)
+	at scala.tools.nsc.typechecker.Namers$Namer.typeSig(Namers.scala:1903)
+	at scala.tools.nsc.typechecker.Namers$Namer$ValTypeCompleter.completeImpl(Namers.scala:918)
+	at scala.tools.nsc.typechecker.Namers$Namer$AccessorTypeCompleter.completeImpl(Namers.scala:942)
+	at scala.tools.nsc.typechecker.Namers$LockingTypeCompleter.complete(Namers.scala:2100)
+	at scala.tools.nsc.typechecker.Namers$LockingTypeCompleter.complete$(Namers.scala:2098)
+	at scala.tools.nsc.typechecker.Namers$TypeCompleterBase.complete(Namers.scala:2093)
+	at scala.reflect.internal.Symbols$Symbol.completeInfo(Symbols.scala:1566)
+	at scala.reflect.internal.Symbols$Symbol.info(Symbols.scala:1538)
+	at scala.meta.internal.pc.CompletionItemResolver.fullDocstring(CompletionItemResolver.scala:71)
+	at scala.meta.internal.pc.CompletionItemResolver.$anonfun$handleSymbol$2(CompletionItemResolver.scala:43)
+	at scala.meta.internal.pc.ItemResolver.enrichDocs(ItemResolver.scala:75)
+	at scala.meta.internal.pc.ItemResolver.enrichDocs$(ItemResolver.scala:14)
+	at scala.meta.internal.pc.CompletionItemResolver.enrichDocs(CompletionItemResolver.scala:12)
+	at scala.meta.internal.pc.CompletionItemResolver.handleSymbol(CompletionItemResolver.scala:44)
+	at scala.meta.internal.pc.CompletionItemResolver.resolve(CompletionItemResolver.scala:28)
+	at scala.meta.internal.pc.ScalaPresentationCompiler.$anonfun$completionItemResolve$1(ScalaPresentationCompiler.scala:421)
+	at scala.meta.internal.pc.CompilerAccess.withSharedCompiler(CompilerAccess.scala:148)
+	at scala.meta.internal.pc.ScalaPresentationCompiler.completionItemResolve(ScalaPresentationCompiler.scala:422)
+	at scala.meta.internal.metals.Compilers.$anonfun$completionItemResolve$2(Compilers.scala:418)
+	at scala.Option.map(Option.scala:242)
+	at scala.meta.internal.metals.Compilers.$anonfun$completionItemResolve$1(Compilers.scala:417)
+	at scala.Option.flatMap(Option.scala:283)
+	at scala.meta.internal.metals.Compilers.completionItemResolve(Compilers.scala:416)
+	at scala.meta.internal.metals.MetalsLspService.$anonfun$completionItemResolve$1(MetalsLspService.scala:1200)
+	at scala.meta.internal.metals.CancelTokens$.future(CancelTokens.scala:38)
+	at scala.meta.internal.metals.MetalsLspService.completionItemResolve(MetalsLspService.scala:1198)
+	at scala.meta.internal.metals.WorkspaceLspService.$anonfun$completionItemResolve$1(WorkspaceLspService.scala:615)
+	at scala.Option.map(Option.scala:242)
+	at scala.meta.internal.metals.WorkspaceLspService.completionItemResolve(WorkspaceLspService.scala:615)
+	at scala.meta.metals.lsp.DelegatingScalaService.completionItemResolve(DelegatingScalaService.scala:149)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint.lambda$recursiveFindRpcMethods$0(GenericEndpoint.java:65)
+	at org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint.request(GenericEndpoint.java:128)
+	at org.eclipse.lsp4j.jsonrpc.RemoteEndpoint.handleRequest(RemoteEndpoint.java:265)
+	at org.eclipse.lsp4j.jsonrpc.RemoteEndpoint.consume(RemoteEndpoint.java:195)
+	at org.eclipse.lsp4j.jsonrpc.json.StreamMessageProducer.handleMessage(StreamMessageProducer.java:189)
+	at org.eclipse.lsp4j.jsonrpc.json.StreamMessageProducer.listen(StreamMessageProducer.java:97)
+	at org.eclipse.lsp4j.jsonrpc.json.ConcurrentMessageProcessor.run(ConcurrentMessageProcessor.java:97)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+2026.04.30 10:41:20 INFO  Created report: Optional[file:///C:/vendingmachineproject/02139-vending-machine/vending/src/main/scala/VendingMachine.scala][0m
+2026.04.30 10:41:20 INFO  java.lang.IndexOutOfBoundsException: -1 is out of bounds (min 0, max 2) (full report at: "C:\vendingmachineproject\02139-vending-machine\.metals\.reports\metals-full\2026-04-30\r_compiler-error_(vending)_10-41-20-111.md")[0m
+2026.04.30 10:41:20 WARN  Could not find semantic tokens for: file:///C:/vendingmachineproject/02139-vending-machine/vending/src/main/scala/VendingMachine.scala[0m
+2026.04.30 10:41:30 INFO  compiling vending (1 scala source)[0m
+2026.04.30 10:41:39 INFO  time: compiled vending in 9.59s[0m
+2026.04.30 11:04:47 WARN  Could not load snapshot text for C:\vendingmachineproject\02139-vending-machine\vending\src\main\scala\VendingMachine.scala[0m
+2026.04.30 11:04:47 INFO  compiling vending (1 scala source)[0m
+2026.04.30 11:05:25 INFO  time: compiled vending in 37s[0m
+Apr 30, 2026 11:11:37 AM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
+>>>>>>> 094b000795a3dbadcf49db41b6093edf22cb6e0f
