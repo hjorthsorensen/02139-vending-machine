@@ -20,7 +20,6 @@ class VendingMachine(maxCount: Int) extends Module {
   val totalMoney = RegInit(0.U(8.W)) // 8 bits, 0 to 99
   val onesDigit = totalMoney % 10.U // right digit
   val tensDigit = (totalMoney / 10.U) % 10.U // left digit
-  val coinRejected = WireDefault(false.B)
 
 
    // PRICE DECODER (Rema1000 prices) //
@@ -51,12 +50,34 @@ class VendingMachine(maxCount: Int) extends Module {
   val cntReg = RegInit(0.U(32.W))
   val selReg = RegInit(0.U(2.W))
 
+  // Coin counter
+
+  val coin2Count = RegInit(0.U(6.W))
+  val coin5Count = RegInit(0.U(6.W))
+  val coinFull = coin2Count >= 63.U || coin5Count >= 63.U
+  val fullDisplayCount = RegInit(0.U(4.W))
+  val showFull = fullDisplayCount > 0.U
+
+  when((risingEdge(io.coin2) && coinFull) || (risingEdge(io.coin5) && coinFull)) {
+    fullDisplayCount := 10.U
+  }
+  when(blinkReg && !RegNext(blinkReg) && showFull) {
+    fullDisplayCount := fullDisplayCount - 1.U
+  }
+
+
+  // Can counter logic & decrease on falling edge of buy
+  val canCount = RegInit(20.U(5.W))
+  val canEmpty = canCount === 0.U
+  val buyFallingEdge = !io.buy && RegNext(io.buy)
+
+
   // EDGE DETECTORS //
   // guds gave )))
   def risingEdge(signal: Bool): Bool = signal && !RegNext(signal)
-  val coin2Edge = risingEdge(io.coin2)
-  val coin5Edge = risingEdge(io.coin5)
-  val buyEdge   = risingEdge(io.buy)
+  val coin2Edge = risingEdge(io.coin2) && !canEmpty && !coinFull
+  val coin5Edge = risingEdge(io.coin5) && !canEmpty && !coinFull
+  val buyEdge   = risingEdge(io.buy) && !canEmpty
 
   // SEVEN SEGMENT DECODER //
   val sevSegDecoder = Module(new SevenSegDec())
@@ -73,6 +94,7 @@ class VendingMachine(maxCount: Int) extends Module {
     rejectCounter := 0.U
     rejectReg := !rejectReg
   }
+
 
    // ALARM TOGGLE LOGIC //
 
@@ -99,6 +121,18 @@ class VendingMachine(maxCount: Int) extends Module {
   
 
   // MONEY UPDATE LOGIC //
+  when(fsm.io.signalCoin2 && totalMoney <= 97.U) {
+    coin2Count := coin2Count + 1.U
+  }
+  when(fsm.io.signalCoin5 && totalMoney <= 94.U) {
+    coin5Count := coin5Count + 1.U
+  }
+
+  when(buyFallingEdge && fsm.io.releaseCan && !canEmpty) {
+    canCount := canCount - 1.U
+  }
+
+
   val rejectNext = WireDefault(false.B)
   fsm.io.inpCoinBeingRej := RegNext(rejectNext, false.B)
 
@@ -124,36 +158,56 @@ class VendingMachine(maxCount: Int) extends Module {
     cntReg := 0.U
     selReg := selReg + 1.U
   }
- 
-  val blinkDuringAlarm = fsm.io.alarm && !blinkReg
 
+  // Dispaly EPty when empty
+  val E = "b1111001".U 
+  val P = "b1110011".U
+  val t = "b1111000".U
+  val y = "b1101110".U
+
+  // Display full when coin full
+  val F = "b1110001".U
+  val U = "b0111110".U
+  val L = "b0111000".U
+ 
+  val blinkDuringAlarm  = fsm.io.alarm && !blinkReg
+
+  val segOut = WireDefault(sevSegDecoder.io.out)
   switch(selReg) {
     is(0.U) {
       activeDigit := Mux(blinkDuringAlarm, "b1111".U, "b0111".U)
       sevSegDecoder.io.in := tensDigit
+      when(canEmpty) {segOut := E}
+      when(showFull) {segOut := F}
     }
     is(1.U) {
       activeDigit := Mux(blinkDuringAlarm, "b1111".U, "b1011".U)
       sevSegDecoder.io.in := onesDigit
+      when(canEmpty) {segOut := P}
+      when(showFull) {segOut := U}
     }
     is(2.U) {
       activeDigit := "b1101".U
       sevSegDecoder.io.in := priceTens
+      when(canEmpty) {segOut := t}
+      when(showFull) {segOut := L}
     }
     is (3.U) {
       activeDigit := "b1110".U
-      sevSegDecoder.io.in := priceOnes
+      sevSegDecoder.io.in := priceOnes 
+      when(canEmpty) {segOut := y}
+      when(showFull) {segOut := L}
     }
   }
 
 
 
   /////# OUTPUT ASSIGNMENTS #/////
-  io.seg := ~sevSegDecoder.io.out      
+  io.seg := ~segOut      
   io.an  := activeDigit     
-  io.releaseCan := fsm.io.releaseCan
+  io.releaseCan := fsm.io.releaseCan && !canEmpty
   io.alarm := fsm.io.alarm && blinkReg
-  io.rejectCoinLED := fsm.io.coinBeingRejected && rejectReg
+  io.rejectCoinLED := (fsm.io.coinBeingRejected || showFull) && rejectReg
 
 }
 
