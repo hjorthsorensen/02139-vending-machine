@@ -14,6 +14,10 @@ class VendingMachine(maxCount: Int) extends Module {
     val seg = Output(UInt(7.W))
     val an = Output(UInt(4.W))
     val txd = Output(UInt(1.W))
+    val sold = Output(Bool())
+    val empty = Output(Bool())
+    val full = Output(Bool())
+    val rtnCoin = Output(Bool())
   })
 
   /////# DATAPATH LOGIC #/////
@@ -231,6 +235,10 @@ class VendingMachine(maxCount: Int) extends Module {
   io.releaseCan := fsm.io.releaseCan && !canEmpty
   io.alarm := fsm.io.alarm && blinkReg
   io.rejectCoinLED := (fsm.io.coinBeingRejected || showFull) && rejectReg
+  io.sold := uart.io.sold
+  io.empty := uart.io.empty
+  io.full := uart.io.full
+  io.rtnCoin := uart.io.rtnCoin
 
 }
 

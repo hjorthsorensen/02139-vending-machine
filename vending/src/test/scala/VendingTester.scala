@@ -35,23 +35,28 @@ class VendingTester extends AnyFlatSpec with ChiselScalatestTester {
       println("Can released successfully!")
 
       dut.io.buy.poke(false.B)
+      dut.io.sold.expect(true.B)
       dut.clock.step(1)
       dut.io.releaseCan.expect(false.B)
 
-      // TEST 3: Not enough money/alarm test //
+      // TEST 3: The "Catch the Pulse" Version
       println("Testing alarm for insufficient funds...")
+
+      // Step 1: Press and hold
       dut.io.buy.poke(true.B)
-      dut.clock.step(1)
+      dut.clock.step(1) 
 
-      if (dut.io.alarm.peek().litToBoolean || !dut.io.releaseCan.peek().litToBoolean) {
-        println("Alarm triggered as expected for insufficient funds.")
-      } else {
-        println("Error: Alarm not triggered when it should have been.")
-      }
-
+      // Step 2: Release the button
       dut.io.buy.poke(false.B)
-      dut.clock.step(1)
 
+      // Step 3: Check IMMEDIATELY (Do not step the clock yet!)
+      // At this exact moment, buyFallingEdge is True in the circuit
+      dut.io.alarm.expect(true.B) 
+      println("Alarm pulse caught successfully!")
+
+      // Step 4: Step the clock and verify it clears
+      dut.clock.step(1)
+      dut.io.alarm.expect(false.B)
 
      // TEST 4: Holding the buy button //
       println("Testing holding the buy button...")
@@ -73,6 +78,46 @@ class VendingTester extends AnyFlatSpec with ChiselScalatestTester {
       dut.clock.step(1)
       dut.io.releaseCan.expect(false.B)
     
+
+    // TEST 5: Empty machine test //
+      println("Testing empty machine scenario...")
+      dut.io.price.poke(1.U)
+      pressButton(dut.io.coin5)
+      pressButton(dut.io.coin5)
+      pressButton(dut.io.coin5)
+      pressButton(dut.io.coin5) // 20
+      
+      for(i <- 1 to 20) {
+        dut.io.buy.poke(true.B)
+        dut.clock.step(1)
+        dut.io.releaseCan.expect(true.B)
+
+        dut.io.buy.poke(false.B)
+        dut.io.sold.expect(true.B)
+        dut.clock.step(1)
+      }
+      
+      // check if empty
+      dut.io.empty.expect(true.B) 
+      println("Verified: Machine is now empty.")
+
+      dut.io.buy.poke(true.B)
+      dut.clock.step(1)
+      dut.io.releaseCan.expect(false.B) // should fail
+      println("Verified: Sale blocked when empty.")
+    
+    // TEST 6: Coins full
+      
+        println("Testing coin storage full scenario...")
+        for(_ <- 1 to 10) {
+          pressButton(dut.io.coin5)
+        }
+        dut.io.full.expect(true.B)
+
+        dut.io.coin2.poke(true.B)
+        dut.clock.step(1)
+        dut.io.rtnCoin.expect(true.B)
+        dut.io.coin2.poke(false.B)
       
       println("Test completed successfully.")
     }
