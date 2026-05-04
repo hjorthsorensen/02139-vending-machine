@@ -9,6 +9,7 @@ class UartDisplay(frequency: Int, baudRate: Int) extends Module {
         val alarm  = Input(Bool())
         val empty  = Input(Bool())
         val full   = Input(Bool())
+        val rtnCoin = Input(Bool())
   })
 
     val tx = Module(new BufferedTx(frequency, baudRate))
@@ -16,21 +17,25 @@ class UartDisplay(frequency: Int, baudRate: Int) extends Module {
 
 
     // Messages
+    
 
-    val soldMsg  = "Item sold!          \n".getBytes.map(_.U(8.W))
-    val alarmMsg = "Not enough money!   \n".getBytes.map(_.U(8.W))
-    val emptyMsg = "Machine empty!      \n".getBytes.map(_.U(8.W))
-    val fullMsg  = "Coin full!          \n".getBytes.map(_.U(8.W))
 
+    //                123456789012345678901 2
+    val soldMsg    = "Item sold!            \n".getBytes.map(_.U(8.W))
+    val alarmMsg   = "Not enough money!     \n".getBytes.map(_.U(8.W))
+    val emptyMsg   = "Machine empty!        \n".getBytes.map(_.U(8.W))
+    val fullMsg    = "Coin full!            \n".getBytes.map(_.U(8.W))
+    val rtnCoinMsg = "Returning coin...     \n".getBytes.map(_.U(8.W))
+
+    val msgLen = 23
     // selector and sender logic
 
     val messages = VecInit(
-        (soldMsg ++ alarmMsg ++ emptyMsg ++ fullMsg).toIndexedSeq
+        (soldMsg ++ alarmMsg ++ emptyMsg ++ fullMsg ++ rtnCoinMsg).toIndexedSeq
     )
 
-    val msgLen = 22 // beskederne er 22 tegn lange
 
-    val msgSel     = RegInit(0.U(2.W))
+    val msgSel     = RegInit(0.U(3.W))
     val cntReg     = RegInit(0.U(8.W))
     val sendingReg = RegInit(false.B)
 
@@ -38,11 +43,13 @@ class UartDisplay(frequency: Int, baudRate: Int) extends Module {
     val alarmEdge = io.alarm && !RegNext(io.alarm)
     val emptyEdge = io.empty && !RegNext(io.empty)
     val fullEdge  = io.full  && !RegNext(io.full)
+    val rtnCoinEdge = io.rtnCoin && !RegNext(io.rtnCoin)
 
     when(soldEdge) { msgSel := 0.U ; cntReg := 0.U ; sendingReg := true.B }
-    when(alarmEdge) { msgSel := 1.U ; cntReg := 0.U ; sendingReg := true.B }
-    when(emptyEdge) { msgSel := 2.U ; cntReg := 0.U ; sendingReg := true.B }
-    when(fullEdge)  { msgSel := 3.U ; cntReg := 0.U ; sendingReg := true.B }
+    .elsewhen(alarmEdge) { msgSel := 1.U ; cntReg := 0.U ; sendingReg := true.B }
+    .elsewhen(emptyEdge) { msgSel := 2.U ; cntReg := 0.U ; sendingReg := true.B }
+    .elsewhen(fullEdge)  { msgSel := 3.U ; cntReg := 0.U ; sendingReg := true.B }
+    .elsewhen(rtnCoinEdge) { msgSel := 4.U ; cntReg := 0.U ; sendingReg := true.B }
 
     tx.io.channel.bits  := messages((msgSel * msgLen.U) + cntReg)
     tx.io.channel.valid := sendingReg

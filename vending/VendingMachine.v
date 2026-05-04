@@ -137,27 +137,27 @@ module Tx(
   reg [31:0] _RAND_1;
   reg [31:0] _RAND_2;
 `endif // RANDOMIZE_REG_INIT
-  reg [10:0] shiftReg; // @[\\src\\main\\scala\\uart.scala 34:25]
+  reg [9:0] shiftReg; // @[\\src\\main\\scala\\uart.scala 34:25]
   reg [19:0] cntReg; // @[\\src\\main\\scala\\uart.scala 35:23]
   reg [3:0] bitsReg; // @[\\src\\main\\scala\\uart.scala 36:24]
   wire  _io_channel_ready_T = cntReg == 20'h0; // @[\\src\\main\\scala\\uart.scala 38:31]
-  wire [9:0] shift = shiftReg[10:1]; // @[\\src\\main\\scala\\uart.scala 45:28]
-  wire [10:0] _shiftReg_T_1 = {1'h1,shift}; // @[\\src\\main\\scala\\uart.scala 46:23]
+  wire [8:0] shift = shiftReg[9:1]; // @[\\src\\main\\scala\\uart.scala 45:28]
+  wire [9:0] _shiftReg_T_1 = {1'h1,shift}; // @[\\src\\main\\scala\\uart.scala 46:23]
   wire [3:0] _bitsReg_T_1 = bitsReg - 4'h1; // @[\\src\\main\\scala\\uart.scala 47:26]
-  wire [10:0] _shiftReg_T_3 = {2'h3,io_channel_bits,1'h0}; // @[\\src\\main\\scala\\uart.scala 51:44]
+  wire [9:0] _shiftReg_T_3 = {1'h1,io_channel_bits,1'h0}; // @[\\src\\main\\scala\\uart.scala 51:44]
   wire [19:0] _cntReg_T_1 = cntReg - 20'h1; // @[\\src\\main\\scala\\uart.scala 59:22]
   assign io_txd = shiftReg[0]; // @[\\src\\main\\scala\\uart.scala 39:21]
   assign io_channel_ready = cntReg == 20'h0 & bitsReg == 4'h0; // @[\\src\\main\\scala\\uart.scala 38:40]
   always @(posedge clock) begin
     if (reset) begin // @[\\src\\main\\scala\\uart.scala 34:25]
-      shiftReg <= 11'h7ff; // @[\\src\\main\\scala\\uart.scala 34:25]
+      shiftReg <= 10'h3ff; // @[\\src\\main\\scala\\uart.scala 34:25]
     end else if (_io_channel_ready_T) begin // @[\\src\\main\\scala\\uart.scala 41:24]
       if (bitsReg != 4'h0) begin // @[\\src\\main\\scala\\uart.scala 44:27]
         shiftReg <= _shiftReg_T_1; // @[\\src\\main\\scala\\uart.scala 46:16]
       end else if (io_channel_valid) begin // @[\\src\\main\\scala\\uart.scala 49:30]
         shiftReg <= _shiftReg_T_3; // @[\\src\\main\\scala\\uart.scala 51:18]
       end else begin
-        shiftReg <= 11'h7ff; // @[\\src\\main\\scala\\uart.scala 54:18]
+        shiftReg <= 10'h3ff; // @[\\src\\main\\scala\\uart.scala 54:18]
       end
     end
     if (reset) begin // @[\\src\\main\\scala\\uart.scala 35:23]
@@ -173,7 +173,7 @@ module Tx(
       if (bitsReg != 4'h0) begin // @[\\src\\main\\scala\\uart.scala 44:27]
         bitsReg <= _bitsReg_T_1; // @[\\src\\main\\scala\\uart.scala 47:15]
       end else if (io_channel_valid) begin // @[\\src\\main\\scala\\uart.scala 49:30]
-        bitsReg <= 4'hb; // @[\\src\\main\\scala\\uart.scala 52:17]
+        bitsReg <= 4'ha; // @[\\src\\main\\scala\\uart.scala 52:17]
       end
     end
   end
@@ -214,7 +214,7 @@ initial begin
     `endif
 `ifdef RANDOMIZE_REG_INIT
   _RAND_0 = {1{`RANDOM}};
-  shiftReg = _RAND_0[10:0];
+  shiftReg = _RAND_0[9:0];
   _RAND_1 = {1{`RANDOM}};
   cntReg = _RAND_1[19:0];
   _RAND_2 = {1{`RANDOM}};
@@ -371,7 +371,8 @@ module UartDisplay(
   input   io_sold, // @[\\src\\main\\scala\\UartDisplay.scala 6:16]
   input   io_alarm, // @[\\src\\main\\scala\\UartDisplay.scala 6:16]
   input   io_empty, // @[\\src\\main\\scala\\UartDisplay.scala 6:16]
-  input   io_full // @[\\src\\main\\scala\\UartDisplay.scala 6:16]
+  input   io_full, // @[\\src\\main\\scala\\UartDisplay.scala 6:16]
+  input   io_rtnCoin // @[\\src\\main\\scala\\UartDisplay.scala 6:16]
 );
 `ifdef RANDOMIZE_REG_INIT
   reg [31:0] _RAND_0;
@@ -381,118 +382,154 @@ module UartDisplay(
   reg [31:0] _RAND_4;
   reg [31:0] _RAND_5;
   reg [31:0] _RAND_6;
+  reg [31:0] _RAND_7;
 `endif // RANDOMIZE_REG_INIT
-  wire  tx_clock; // @[\\src\\main\\scala\\UartDisplay.scala 14:20]
-  wire  tx_reset; // @[\\src\\main\\scala\\UartDisplay.scala 14:20]
-  wire  tx_io_txd; // @[\\src\\main\\scala\\UartDisplay.scala 14:20]
-  wire  tx_io_channel_ready; // @[\\src\\main\\scala\\UartDisplay.scala 14:20]
-  wire  tx_io_channel_valid; // @[\\src\\main\\scala\\UartDisplay.scala 14:20]
-  wire [7:0] tx_io_channel_bits; // @[\\src\\main\\scala\\UartDisplay.scala 14:20]
-  reg [1:0] msgSel; // @[\\src\\main\\scala\\UartDisplay.scala 33:29]
-  reg [7:0] cntReg; // @[\\src\\main\\scala\\UartDisplay.scala 34:29]
-  reg  sendingReg; // @[\\src\\main\\scala\\UartDisplay.scala 35:29]
-  reg  soldEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 37:41]
-  wire  soldEdge = io_sold & ~soldEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 37:30]
-  reg  alarmEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 38:41]
-  wire  alarmEdge = io_alarm & ~alarmEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 38:30]
-  reg  emptyEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 39:41]
-  wire  emptyEdge = io_empty & ~emptyEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 39:30]
-  reg  fullEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 40:41]
-  wire  fullEdge = io_full & ~fullEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 40:30]
-  wire [1:0] _GEN_0 = soldEdge ? 2'h0 : msgSel; // @[\\src\\main\\scala\\UartDisplay.scala 42:20 33:29 42:29]
-  wire [7:0] _GEN_1 = soldEdge ? 8'h0 : cntReg; // @[\\src\\main\\scala\\UartDisplay.scala 42:20 34:29 42:45]
-  wire  _GEN_2 = soldEdge | sendingReg; // @[\\src\\main\\scala\\UartDisplay.scala 42:20 35:29 42:65]
-  wire [7:0] _GEN_4 = alarmEdge ? 8'h0 : _GEN_1; // @[\\src\\main\\scala\\UartDisplay.scala 43:{21,46}]
-  wire  _GEN_5 = alarmEdge | _GEN_2; // @[\\src\\main\\scala\\UartDisplay.scala 43:{21,66}]
-  wire  _GEN_8 = emptyEdge | _GEN_5; // @[\\src\\main\\scala\\UartDisplay.scala 44:{21,66}]
-  wire  _GEN_11 = fullEdge | _GEN_8; // @[\\src\\main\\scala\\UartDisplay.scala 45:{21,66}]
-  wire [6:0] _tx_io_channel_bits_T = msgSel * 5'h16; // @[\\src\\main\\scala\\UartDisplay.scala 47:45]
-  wire [7:0] _GEN_100 = {{1'd0}, _tx_io_channel_bits_T}; // @[\\src\\main\\scala\\UartDisplay.scala 47:57]
-  wire [7:0] _tx_io_channel_bits_T_2 = _GEN_100 + cntReg; // @[\\src\\main\\scala\\UartDisplay.scala 47:57]
-  wire [7:0] _GEN_13 = 7'h1 == _tx_io_channel_bits_T_2[6:0] ? 8'h74 : 8'h49; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_14 = 7'h2 == _tx_io_channel_bits_T_2[6:0] ? 8'h65 : _GEN_13; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_15 = 7'h3 == _tx_io_channel_bits_T_2[6:0] ? 8'h6d : _GEN_14; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_16 = 7'h4 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_15; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_17 = 7'h5 == _tx_io_channel_bits_T_2[6:0] ? 8'h73 : _GEN_16; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_18 = 7'h6 == _tx_io_channel_bits_T_2[6:0] ? 8'h6f : _GEN_17; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_19 = 7'h7 == _tx_io_channel_bits_T_2[6:0] ? 8'h6c : _GEN_18; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_20 = 7'h8 == _tx_io_channel_bits_T_2[6:0] ? 8'h64 : _GEN_19; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_21 = 7'h9 == _tx_io_channel_bits_T_2[6:0] ? 8'h21 : _GEN_20; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_22 = 7'ha == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_21; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_23 = 7'hb == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_22; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_24 = 7'hc == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_23; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_25 = 7'hd == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_24; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_26 = 7'he == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_25; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_27 = 7'hf == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_26; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_28 = 7'h10 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_27; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_29 = 7'h11 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_28; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_30 = 7'h12 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_29; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_31 = 7'h13 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_30; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_32 = 7'h14 == _tx_io_channel_bits_T_2[6:0] ? 8'ha : _GEN_31; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_33 = 7'h15 == _tx_io_channel_bits_T_2[6:0] ? 8'h4e : _GEN_32; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_34 = 7'h16 == _tx_io_channel_bits_T_2[6:0] ? 8'h6f : _GEN_33; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_35 = 7'h17 == _tx_io_channel_bits_T_2[6:0] ? 8'h74 : _GEN_34; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_36 = 7'h18 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_35; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_37 = 7'h19 == _tx_io_channel_bits_T_2[6:0] ? 8'h65 : _GEN_36; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_38 = 7'h1a == _tx_io_channel_bits_T_2[6:0] ? 8'h6e : _GEN_37; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_39 = 7'h1b == _tx_io_channel_bits_T_2[6:0] ? 8'h6f : _GEN_38; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_40 = 7'h1c == _tx_io_channel_bits_T_2[6:0] ? 8'h75 : _GEN_39; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_41 = 7'h1d == _tx_io_channel_bits_T_2[6:0] ? 8'h67 : _GEN_40; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_42 = 7'h1e == _tx_io_channel_bits_T_2[6:0] ? 8'h68 : _GEN_41; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_43 = 7'h1f == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_42; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_44 = 7'h20 == _tx_io_channel_bits_T_2[6:0] ? 8'h6d : _GEN_43; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_45 = 7'h21 == _tx_io_channel_bits_T_2[6:0] ? 8'h6f : _GEN_44; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_46 = 7'h22 == _tx_io_channel_bits_T_2[6:0] ? 8'h6e : _GEN_45; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_47 = 7'h23 == _tx_io_channel_bits_T_2[6:0] ? 8'h65 : _GEN_46; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_48 = 7'h24 == _tx_io_channel_bits_T_2[6:0] ? 8'h79 : _GEN_47; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_49 = 7'h25 == _tx_io_channel_bits_T_2[6:0] ? 8'h21 : _GEN_48; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_50 = 7'h26 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_49; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_51 = 7'h27 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_50; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_52 = 7'h28 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_51; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_53 = 7'h29 == _tx_io_channel_bits_T_2[6:0] ? 8'ha : _GEN_52; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_54 = 7'h2a == _tx_io_channel_bits_T_2[6:0] ? 8'h4d : _GEN_53; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_55 = 7'h2b == _tx_io_channel_bits_T_2[6:0] ? 8'h61 : _GEN_54; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_56 = 7'h2c == _tx_io_channel_bits_T_2[6:0] ? 8'h63 : _GEN_55; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_57 = 7'h2d == _tx_io_channel_bits_T_2[6:0] ? 8'h68 : _GEN_56; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_58 = 7'h2e == _tx_io_channel_bits_T_2[6:0] ? 8'h69 : _GEN_57; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_59 = 7'h2f == _tx_io_channel_bits_T_2[6:0] ? 8'h6e : _GEN_58; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_60 = 7'h30 == _tx_io_channel_bits_T_2[6:0] ? 8'h65 : _GEN_59; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_61 = 7'h31 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_60; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_62 = 7'h32 == _tx_io_channel_bits_T_2[6:0] ? 8'h65 : _GEN_61; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_63 = 7'h33 == _tx_io_channel_bits_T_2[6:0] ? 8'h6d : _GEN_62; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_64 = 7'h34 == _tx_io_channel_bits_T_2[6:0] ? 8'h70 : _GEN_63; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_65 = 7'h35 == _tx_io_channel_bits_T_2[6:0] ? 8'h74 : _GEN_64; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_66 = 7'h36 == _tx_io_channel_bits_T_2[6:0] ? 8'h79 : _GEN_65; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_67 = 7'h37 == _tx_io_channel_bits_T_2[6:0] ? 8'h21 : _GEN_66; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_68 = 7'h38 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_67; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_69 = 7'h39 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_68; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_70 = 7'h3a == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_69; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_71 = 7'h3b == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_70; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_72 = 7'h3c == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_71; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_73 = 7'h3d == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_72; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_74 = 7'h3e == _tx_io_channel_bits_T_2[6:0] ? 8'ha : _GEN_73; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_75 = 7'h3f == _tx_io_channel_bits_T_2[6:0] ? 8'h43 : _GEN_74; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_76 = 7'h40 == _tx_io_channel_bits_T_2[6:0] ? 8'h6f : _GEN_75; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_77 = 7'h41 == _tx_io_channel_bits_T_2[6:0] ? 8'h69 : _GEN_76; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_78 = 7'h42 == _tx_io_channel_bits_T_2[6:0] ? 8'h6e : _GEN_77; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_79 = 7'h43 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_78; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_80 = 7'h44 == _tx_io_channel_bits_T_2[6:0] ? 8'h66 : _GEN_79; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_81 = 7'h45 == _tx_io_channel_bits_T_2[6:0] ? 8'h75 : _GEN_80; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_82 = 7'h46 == _tx_io_channel_bits_T_2[6:0] ? 8'h6c : _GEN_81; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_83 = 7'h47 == _tx_io_channel_bits_T_2[6:0] ? 8'h6c : _GEN_82; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_84 = 7'h48 == _tx_io_channel_bits_T_2[6:0] ? 8'h21 : _GEN_83; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_85 = 7'h49 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_84; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_86 = 7'h4a == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_85; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_87 = 7'h4b == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_86; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_88 = 7'h4c == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_87; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_89 = 7'h4d == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_88; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_90 = 7'h4e == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_89; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_91 = 7'h4f == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_90; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_92 = 7'h50 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_91; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_93 = 7'h51 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_92; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _GEN_94 = 7'h52 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_93; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
-  wire [7:0] _cntReg_T_1 = cntReg + 8'h1; // @[\\src\\main\\scala\\UartDisplay.scala 55:30]
-  BufferedTx tx ( // @[\\src\\main\\scala\\UartDisplay.scala 14:20]
+  wire  tx_clock; // @[\\src\\main\\scala\\UartDisplay.scala 15:20]
+  wire  tx_reset; // @[\\src\\main\\scala\\UartDisplay.scala 15:20]
+  wire  tx_io_txd; // @[\\src\\main\\scala\\UartDisplay.scala 15:20]
+  wire  tx_io_channel_ready; // @[\\src\\main\\scala\\UartDisplay.scala 15:20]
+  wire  tx_io_channel_valid; // @[\\src\\main\\scala\\UartDisplay.scala 15:20]
+  wire [7:0] tx_io_channel_bits; // @[\\src\\main\\scala\\UartDisplay.scala 15:20]
+  reg [2:0] msgSel; // @[\\src\\main\\scala\\UartDisplay.scala 38:29]
+  reg [7:0] cntReg; // @[\\src\\main\\scala\\UartDisplay.scala 39:29]
+  reg  sendingReg; // @[\\src\\main\\scala\\UartDisplay.scala 40:29]
+  reg  soldEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 42:41]
+  wire  soldEdge = io_sold & ~soldEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 42:30]
+  reg  alarmEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 43:41]
+  wire  alarmEdge = io_alarm & ~alarmEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 43:30]
+  reg  emptyEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 44:41]
+  wire  emptyEdge = io_empty & ~emptyEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 44:30]
+  reg  fullEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 45:41]
+  wire  fullEdge = io_full & ~fullEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 45:30]
+  reg  rtnCoinEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 46:45]
+  wire  rtnCoinEdge = io_rtnCoin & ~rtnCoinEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 46:34]
+  wire [2:0] _GEN_0 = rtnCoinEdge ? 3'h4 : msgSel; // @[\\src\\main\\scala\\UartDisplay.scala 52:28 38:29 52:37]
+  wire [7:0] _GEN_1 = rtnCoinEdge ? 8'h0 : cntReg; // @[\\src\\main\\scala\\UartDisplay.scala 52:28 39:29 52:53]
+  wire  _GEN_2 = rtnCoinEdge | sendingReg; // @[\\src\\main\\scala\\UartDisplay.scala 52:28 40:29 52:73]
+  wire [2:0] _GEN_3 = fullEdge ? 3'h3 : _GEN_0; // @[\\src\\main\\scala\\UartDisplay.scala 51:{26,35}]
+  wire [7:0] _GEN_4 = fullEdge ? 8'h0 : _GEN_1; // @[\\src\\main\\scala\\UartDisplay.scala 51:{26,51}]
+  wire  _GEN_5 = fullEdge | _GEN_2; // @[\\src\\main\\scala\\UartDisplay.scala 51:{26,71}]
+  wire [7:0] _GEN_7 = emptyEdge ? 8'h0 : _GEN_4; // @[\\src\\main\\scala\\UartDisplay.scala 50:{26,51}]
+  wire  _GEN_8 = emptyEdge | _GEN_5; // @[\\src\\main\\scala\\UartDisplay.scala 50:{26,71}]
+  wire  _GEN_11 = alarmEdge | _GEN_8; // @[\\src\\main\\scala\\UartDisplay.scala 49:{26,71}]
+  wire  _GEN_14 = soldEdge | _GEN_11; // @[\\src\\main\\scala\\UartDisplay.scala 48:{20,65}]
+  wire [7:0] _tx_io_channel_bits_T = msgSel * 5'h17; // @[\\src\\main\\scala\\UartDisplay.scala 54:45]
+  wire [7:0] _tx_io_channel_bits_T_2 = _tx_io_channel_bits_T + cntReg; // @[\\src\\main\\scala\\UartDisplay.scala 54:57]
+  wire [7:0] _GEN_16 = 7'h1 == _tx_io_channel_bits_T_2[6:0] ? 8'h74 : 8'h49; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_17 = 7'h2 == _tx_io_channel_bits_T_2[6:0] ? 8'h65 : _GEN_16; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_18 = 7'h3 == _tx_io_channel_bits_T_2[6:0] ? 8'h6d : _GEN_17; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_19 = 7'h4 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_18; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_20 = 7'h5 == _tx_io_channel_bits_T_2[6:0] ? 8'h73 : _GEN_19; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_21 = 7'h6 == _tx_io_channel_bits_T_2[6:0] ? 8'h6f : _GEN_20; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_22 = 7'h7 == _tx_io_channel_bits_T_2[6:0] ? 8'h6c : _GEN_21; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_23 = 7'h8 == _tx_io_channel_bits_T_2[6:0] ? 8'h64 : _GEN_22; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_24 = 7'h9 == _tx_io_channel_bits_T_2[6:0] ? 8'h21 : _GEN_23; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_25 = 7'ha == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_24; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_26 = 7'hb == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_25; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_27 = 7'hc == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_26; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_28 = 7'hd == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_27; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_29 = 7'he == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_28; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_30 = 7'hf == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_29; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_31 = 7'h10 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_30; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_32 = 7'h11 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_31; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_33 = 7'h12 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_32; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_34 = 7'h13 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_33; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_35 = 7'h14 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_34; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_36 = 7'h15 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_35; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_37 = 7'h16 == _tx_io_channel_bits_T_2[6:0] ? 8'ha : _GEN_36; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_38 = 7'h17 == _tx_io_channel_bits_T_2[6:0] ? 8'h4e : _GEN_37; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_39 = 7'h18 == _tx_io_channel_bits_T_2[6:0] ? 8'h6f : _GEN_38; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_40 = 7'h19 == _tx_io_channel_bits_T_2[6:0] ? 8'h74 : _GEN_39; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_41 = 7'h1a == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_40; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_42 = 7'h1b == _tx_io_channel_bits_T_2[6:0] ? 8'h65 : _GEN_41; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_43 = 7'h1c == _tx_io_channel_bits_T_2[6:0] ? 8'h6e : _GEN_42; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_44 = 7'h1d == _tx_io_channel_bits_T_2[6:0] ? 8'h6f : _GEN_43; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_45 = 7'h1e == _tx_io_channel_bits_T_2[6:0] ? 8'h75 : _GEN_44; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_46 = 7'h1f == _tx_io_channel_bits_T_2[6:0] ? 8'h67 : _GEN_45; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_47 = 7'h20 == _tx_io_channel_bits_T_2[6:0] ? 8'h68 : _GEN_46; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_48 = 7'h21 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_47; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_49 = 7'h22 == _tx_io_channel_bits_T_2[6:0] ? 8'h6d : _GEN_48; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_50 = 7'h23 == _tx_io_channel_bits_T_2[6:0] ? 8'h6f : _GEN_49; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_51 = 7'h24 == _tx_io_channel_bits_T_2[6:0] ? 8'h6e : _GEN_50; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_52 = 7'h25 == _tx_io_channel_bits_T_2[6:0] ? 8'h65 : _GEN_51; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_53 = 7'h26 == _tx_io_channel_bits_T_2[6:0] ? 8'h79 : _GEN_52; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_54 = 7'h27 == _tx_io_channel_bits_T_2[6:0] ? 8'h21 : _GEN_53; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_55 = 7'h28 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_54; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_56 = 7'h29 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_55; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_57 = 7'h2a == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_56; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_58 = 7'h2b == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_57; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_59 = 7'h2c == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_58; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_60 = 7'h2d == _tx_io_channel_bits_T_2[6:0] ? 8'ha : _GEN_59; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_61 = 7'h2e == _tx_io_channel_bits_T_2[6:0] ? 8'h4d : _GEN_60; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_62 = 7'h2f == _tx_io_channel_bits_T_2[6:0] ? 8'h61 : _GEN_61; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_63 = 7'h30 == _tx_io_channel_bits_T_2[6:0] ? 8'h63 : _GEN_62; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_64 = 7'h31 == _tx_io_channel_bits_T_2[6:0] ? 8'h68 : _GEN_63; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_65 = 7'h32 == _tx_io_channel_bits_T_2[6:0] ? 8'h69 : _GEN_64; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_66 = 7'h33 == _tx_io_channel_bits_T_2[6:0] ? 8'h6e : _GEN_65; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_67 = 7'h34 == _tx_io_channel_bits_T_2[6:0] ? 8'h65 : _GEN_66; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_68 = 7'h35 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_67; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_69 = 7'h36 == _tx_io_channel_bits_T_2[6:0] ? 8'h65 : _GEN_68; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_70 = 7'h37 == _tx_io_channel_bits_T_2[6:0] ? 8'h6d : _GEN_69; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_71 = 7'h38 == _tx_io_channel_bits_T_2[6:0] ? 8'h70 : _GEN_70; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_72 = 7'h39 == _tx_io_channel_bits_T_2[6:0] ? 8'h74 : _GEN_71; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_73 = 7'h3a == _tx_io_channel_bits_T_2[6:0] ? 8'h79 : _GEN_72; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_74 = 7'h3b == _tx_io_channel_bits_T_2[6:0] ? 8'h21 : _GEN_73; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_75 = 7'h3c == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_74; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_76 = 7'h3d == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_75; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_77 = 7'h3e == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_76; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_78 = 7'h3f == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_77; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_79 = 7'h40 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_78; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_80 = 7'h41 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_79; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_81 = 7'h42 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_80; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_82 = 7'h43 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_81; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_83 = 7'h44 == _tx_io_channel_bits_T_2[6:0] ? 8'ha : _GEN_82; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_84 = 7'h45 == _tx_io_channel_bits_T_2[6:0] ? 8'h43 : _GEN_83; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_85 = 7'h46 == _tx_io_channel_bits_T_2[6:0] ? 8'h6f : _GEN_84; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_86 = 7'h47 == _tx_io_channel_bits_T_2[6:0] ? 8'h69 : _GEN_85; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_87 = 7'h48 == _tx_io_channel_bits_T_2[6:0] ? 8'h6e : _GEN_86; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_88 = 7'h49 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_87; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_89 = 7'h4a == _tx_io_channel_bits_T_2[6:0] ? 8'h66 : _GEN_88; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_90 = 7'h4b == _tx_io_channel_bits_T_2[6:0] ? 8'h75 : _GEN_89; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_91 = 7'h4c == _tx_io_channel_bits_T_2[6:0] ? 8'h6c : _GEN_90; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_92 = 7'h4d == _tx_io_channel_bits_T_2[6:0] ? 8'h6c : _GEN_91; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_93 = 7'h4e == _tx_io_channel_bits_T_2[6:0] ? 8'h21 : _GEN_92; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_94 = 7'h4f == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_93; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_95 = 7'h50 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_94; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_96 = 7'h51 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_95; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_97 = 7'h52 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_96; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_98 = 7'h53 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_97; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_99 = 7'h54 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_98; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_100 = 7'h55 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_99; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_101 = 7'h56 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_100; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_102 = 7'h57 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_101; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_103 = 7'h58 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_102; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_104 = 7'h59 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_103; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_105 = 7'h5a == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_104; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_106 = 7'h5b == _tx_io_channel_bits_T_2[6:0] ? 8'ha : _GEN_105; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_107 = 7'h5c == _tx_io_channel_bits_T_2[6:0] ? 8'h52 : _GEN_106; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_108 = 7'h5d == _tx_io_channel_bits_T_2[6:0] ? 8'h65 : _GEN_107; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_109 = 7'h5e == _tx_io_channel_bits_T_2[6:0] ? 8'h74 : _GEN_108; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_110 = 7'h5f == _tx_io_channel_bits_T_2[6:0] ? 8'h75 : _GEN_109; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_111 = 7'h60 == _tx_io_channel_bits_T_2[6:0] ? 8'h72 : _GEN_110; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_112 = 7'h61 == _tx_io_channel_bits_T_2[6:0] ? 8'h6e : _GEN_111; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_113 = 7'h62 == _tx_io_channel_bits_T_2[6:0] ? 8'h69 : _GEN_112; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_114 = 7'h63 == _tx_io_channel_bits_T_2[6:0] ? 8'h6e : _GEN_113; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_115 = 7'h64 == _tx_io_channel_bits_T_2[6:0] ? 8'h67 : _GEN_114; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_116 = 7'h65 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_115; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_117 = 7'h66 == _tx_io_channel_bits_T_2[6:0] ? 8'h63 : _GEN_116; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_118 = 7'h67 == _tx_io_channel_bits_T_2[6:0] ? 8'h6f : _GEN_117; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_119 = 7'h68 == _tx_io_channel_bits_T_2[6:0] ? 8'h69 : _GEN_118; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_120 = 7'h69 == _tx_io_channel_bits_T_2[6:0] ? 8'h6e : _GEN_119; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_121 = 7'h6a == _tx_io_channel_bits_T_2[6:0] ? 8'h2e : _GEN_120; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_122 = 7'h6b == _tx_io_channel_bits_T_2[6:0] ? 8'h2e : _GEN_121; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_123 = 7'h6c == _tx_io_channel_bits_T_2[6:0] ? 8'h2e : _GEN_122; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_124 = 7'h6d == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_123; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_125 = 7'h6e == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_124; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_126 = 7'h6f == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_125; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_127 = 7'h70 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_126; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _GEN_128 = 7'h71 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_127; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
+  wire [7:0] _cntReg_T_1 = cntReg + 8'h1; // @[\\src\\main\\scala\\UartDisplay.scala 62:30]
+  BufferedTx tx ( // @[\\src\\main\\scala\\UartDisplay.scala 15:20]
     .clock(tx_clock),
     .reset(tx_reset),
     .io_txd(tx_io_txd),
@@ -500,53 +537,54 @@ module UartDisplay(
     .io_channel_valid(tx_io_channel_valid),
     .io_channel_bits(tx_io_channel_bits)
   );
-  assign io_txd = tx_io_txd; // @[\\src\\main\\scala\\UartDisplay.scala 15:12]
+  assign io_txd = tx_io_txd; // @[\\src\\main\\scala\\UartDisplay.scala 16:12]
   assign tx_clock = clock;
   assign tx_reset = reset;
-  assign tx_io_channel_valid = sendingReg; // @[\\src\\main\\scala\\UartDisplay.scala 48:25]
-  assign tx_io_channel_bits = 7'h53 == _tx_io_channel_bits_T_2[6:0] ? 8'ha : _GEN_94; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  assign tx_io_channel_valid = sendingReg; // @[\\src\\main\\scala\\UartDisplay.scala 55:25]
+  assign tx_io_channel_bits = 7'h72 == _tx_io_channel_bits_T_2[6:0] ? 8'ha : _GEN_128; // @[\\src\\main\\scala\\UartDisplay.scala 54:{25,25}]
   always @(posedge clock) begin
-    if (reset) begin // @[\\src\\main\\scala\\UartDisplay.scala 33:29]
-      msgSel <= 2'h0; // @[\\src\\main\\scala\\UartDisplay.scala 33:29]
-    end else if (fullEdge) begin // @[\\src\\main\\scala\\UartDisplay.scala 45:21]
-      msgSel <= 2'h3; // @[\\src\\main\\scala\\UartDisplay.scala 45:30]
-    end else if (emptyEdge) begin // @[\\src\\main\\scala\\UartDisplay.scala 44:21]
-      msgSel <= 2'h2; // @[\\src\\main\\scala\\UartDisplay.scala 44:30]
-    end else if (alarmEdge) begin // @[\\src\\main\\scala\\UartDisplay.scala 43:21]
-      msgSel <= 2'h1; // @[\\src\\main\\scala\\UartDisplay.scala 43:30]
+    if (reset) begin // @[\\src\\main\\scala\\UartDisplay.scala 38:29]
+      msgSel <= 3'h0; // @[\\src\\main\\scala\\UartDisplay.scala 38:29]
+    end else if (soldEdge) begin // @[\\src\\main\\scala\\UartDisplay.scala 48:20]
+      msgSel <= 3'h0; // @[\\src\\main\\scala\\UartDisplay.scala 48:29]
+    end else if (alarmEdge) begin // @[\\src\\main\\scala\\UartDisplay.scala 49:26]
+      msgSel <= 3'h1; // @[\\src\\main\\scala\\UartDisplay.scala 49:35]
+    end else if (emptyEdge) begin // @[\\src\\main\\scala\\UartDisplay.scala 50:26]
+      msgSel <= 3'h2; // @[\\src\\main\\scala\\UartDisplay.scala 50:35]
     end else begin
-      msgSel <= _GEN_0;
+      msgSel <= _GEN_3;
     end
-    if (reset) begin // @[\\src\\main\\scala\\UartDisplay.scala 34:29]
-      cntReg <= 8'h0; // @[\\src\\main\\scala\\UartDisplay.scala 34:29]
-    end else if (tx_io_channel_ready & sendingReg) begin // @[\\src\\main\\scala\\UartDisplay.scala 50:45]
-      if (cntReg == 8'h15) begin // @[\\src\\main\\scala\\UartDisplay.scala 51:41]
-        cntReg <= 8'h0; // @[\\src\\main\\scala\\UartDisplay.scala 53:20]
+    if (reset) begin // @[\\src\\main\\scala\\UartDisplay.scala 39:29]
+      cntReg <= 8'h0; // @[\\src\\main\\scala\\UartDisplay.scala 39:29]
+    end else if (tx_io_channel_ready & sendingReg) begin // @[\\src\\main\\scala\\UartDisplay.scala 57:45]
+      if (cntReg == 8'h16) begin // @[\\src\\main\\scala\\UartDisplay.scala 58:41]
+        cntReg <= 8'h0; // @[\\src\\main\\scala\\UartDisplay.scala 60:20]
       end else begin
-        cntReg <= _cntReg_T_1; // @[\\src\\main\\scala\\UartDisplay.scala 55:20]
+        cntReg <= _cntReg_T_1; // @[\\src\\main\\scala\\UartDisplay.scala 62:20]
       end
-    end else if (fullEdge) begin // @[\\src\\main\\scala\\UartDisplay.scala 45:21]
-      cntReg <= 8'h0; // @[\\src\\main\\scala\\UartDisplay.scala 45:46]
-    end else if (emptyEdge) begin // @[\\src\\main\\scala\\UartDisplay.scala 44:21]
-      cntReg <= 8'h0; // @[\\src\\main\\scala\\UartDisplay.scala 44:46]
+    end else if (soldEdge) begin // @[\\src\\main\\scala\\UartDisplay.scala 48:20]
+      cntReg <= 8'h0; // @[\\src\\main\\scala\\UartDisplay.scala 48:45]
+    end else if (alarmEdge) begin // @[\\src\\main\\scala\\UartDisplay.scala 49:26]
+      cntReg <= 8'h0; // @[\\src\\main\\scala\\UartDisplay.scala 49:51]
     end else begin
-      cntReg <= _GEN_4;
+      cntReg <= _GEN_7;
     end
-    if (reset) begin // @[\\src\\main\\scala\\UartDisplay.scala 35:29]
-      sendingReg <= 1'h0; // @[\\src\\main\\scala\\UartDisplay.scala 35:29]
-    end else if (tx_io_channel_ready & sendingReg) begin // @[\\src\\main\\scala\\UartDisplay.scala 50:45]
-      if (cntReg == 8'h15) begin // @[\\src\\main\\scala\\UartDisplay.scala 51:41]
-        sendingReg <= 1'h0; // @[\\src\\main\\scala\\UartDisplay.scala 52:24]
+    if (reset) begin // @[\\src\\main\\scala\\UartDisplay.scala 40:29]
+      sendingReg <= 1'h0; // @[\\src\\main\\scala\\UartDisplay.scala 40:29]
+    end else if (tx_io_channel_ready & sendingReg) begin // @[\\src\\main\\scala\\UartDisplay.scala 57:45]
+      if (cntReg == 8'h16) begin // @[\\src\\main\\scala\\UartDisplay.scala 58:41]
+        sendingReg <= 1'h0; // @[\\src\\main\\scala\\UartDisplay.scala 59:24]
       end else begin
-        sendingReg <= _GEN_11;
+        sendingReg <= _GEN_14;
       end
     end else begin
-      sendingReg <= _GEN_11;
+      sendingReg <= _GEN_14;
     end
-    soldEdge_REG <= io_sold; // @[\\src\\main\\scala\\UartDisplay.scala 37:41]
-    alarmEdge_REG <= io_alarm; // @[\\src\\main\\scala\\UartDisplay.scala 38:41]
-    emptyEdge_REG <= io_empty; // @[\\src\\main\\scala\\UartDisplay.scala 39:41]
-    fullEdge_REG <= io_full; // @[\\src\\main\\scala\\UartDisplay.scala 40:41]
+    soldEdge_REG <= io_sold; // @[\\src\\main\\scala\\UartDisplay.scala 42:41]
+    alarmEdge_REG <= io_alarm; // @[\\src\\main\\scala\\UartDisplay.scala 43:41]
+    emptyEdge_REG <= io_empty; // @[\\src\\main\\scala\\UartDisplay.scala 44:41]
+    fullEdge_REG <= io_full; // @[\\src\\main\\scala\\UartDisplay.scala 45:41]
+    rtnCoinEdge_REG <= io_rtnCoin; // @[\\src\\main\\scala\\UartDisplay.scala 46:45]
   end
 // Register and memory initialization
 `ifdef RANDOMIZE_GARBAGE_ASSIGN
@@ -585,7 +623,7 @@ initial begin
     `endif
 `ifdef RANDOMIZE_REG_INIT
   _RAND_0 = {1{`RANDOM}};
-  msgSel = _RAND_0[1:0];
+  msgSel = _RAND_0[2:0];
   _RAND_1 = {1{`RANDOM}};
   cntReg = _RAND_1[7:0];
   _RAND_2 = {1{`RANDOM}};
@@ -598,6 +636,8 @@ initial begin
   emptyEdge_REG = _RAND_5[0:0];
   _RAND_6 = {1{`RANDOM}};
   fullEdge_REG = _RAND_6[0:0];
+  _RAND_7 = {1{`RANDOM}};
+  rtnCoinEdge_REG = _RAND_7[0:0];
 `endif // RANDOMIZE_REG_INIT
   `endif // RANDOMIZE
 end // initial
@@ -643,7 +683,6 @@ module VendingMachine(
   reg [31:0] _RAND_19;
   reg [31:0] _RAND_20;
   reg [31:0] _RAND_21;
-  reg [31:0] _RAND_22;
 `endif // RANDOMIZE_REG_INIT
   wire [3:0] sevSegDecoder_io_in; // @[\\src\\main\\scala\\VendingMachine.scala 92:29]
   wire [6:0] sevSegDecoder_io_out; // @[\\src\\main\\scala\\VendingMachine.scala 92:29]
@@ -664,13 +703,14 @@ module VendingMachine(
   wire  fsm_io_releaseCan; // @[\\src\\main\\scala\\VendingMachine.scala 119:19]
   wire  fsm_io_alarm; // @[\\src\\main\\scala\\VendingMachine.scala 119:19]
   wire  fsm_io_coinBeingRejected; // @[\\src\\main\\scala\\VendingMachine.scala 119:19]
-  wire  uart_clock; // @[\\src\\main\\scala\\VendingMachine.scala 222:20]
-  wire  uart_reset; // @[\\src\\main\\scala\\VendingMachine.scala 222:20]
-  wire  uart_io_txd; // @[\\src\\main\\scala\\VendingMachine.scala 222:20]
-  wire  uart_io_sold; // @[\\src\\main\\scala\\VendingMachine.scala 222:20]
-  wire  uart_io_alarm; // @[\\src\\main\\scala\\VendingMachine.scala 222:20]
-  wire  uart_io_empty; // @[\\src\\main\\scala\\VendingMachine.scala 222:20]
-  wire  uart_io_full; // @[\\src\\main\\scala\\VendingMachine.scala 222:20]
+  wire  uart_clock; // @[\\src\\main\\scala\\VendingMachine.scala 215:20]
+  wire  uart_reset; // @[\\src\\main\\scala\\VendingMachine.scala 215:20]
+  wire  uart_io_txd; // @[\\src\\main\\scala\\VendingMachine.scala 215:20]
+  wire  uart_io_sold; // @[\\src\\main\\scala\\VendingMachine.scala 215:20]
+  wire  uart_io_alarm; // @[\\src\\main\\scala\\VendingMachine.scala 215:20]
+  wire  uart_io_empty; // @[\\src\\main\\scala\\VendingMachine.scala 215:20]
+  wire  uart_io_full; // @[\\src\\main\\scala\\VendingMachine.scala 215:20]
+  wire  uart_io_rtnCoin; // @[\\src\\main\\scala\\VendingMachine.scala 215:20]
   reg [7:0] totalMoney; // @[\\src\\main\\scala\\VendingMachine.scala 29:27]
   wire [7:0] _GEN_26 = totalMoney % 8'ha; // @[\\src\\main\\scala\\VendingMachine.scala 30:30]
   wire [3:0] onesDigit = _GEN_26[3:0]; // @[\\src\\main\\scala\\VendingMachine.scala 30:30]
@@ -728,6 +768,7 @@ module VendingMachine(
   wire [5:0] _coin2Count_T_1 = coin2Count + 6'h1; // @[\\src\\main\\scala\\VendingMachine.scala 134:30]
   wire  _T_23 = totalMoney <= 8'h5e; // @[\\src\\main\\scala\\VendingMachine.scala 136:41]
   wire [5:0] _coin5Count_T_1 = coin5Count + 6'h1; // @[\\src\\main\\scala\\VendingMachine.scala 137:30]
+  wire  _T_25 = buyFallingEdge & fsm_io_releaseCan; // @[\\src\\main\\scala\\VendingMachine.scala 140:23]
   wire [4:0] _canCount_T_1 = canCount - 5'h1; // @[\\src\\main\\scala\\VendingMachine.scala 141:26]
   reg  fsm_io_inpCoinBeingRej_REG; // @[\\src\\main\\scala\\VendingMachine.scala 146:36]
   wire [7:0] _totalMoney_T_1 = totalMoney + 8'h2; // @[\\src\\main\\scala\\VendingMachine.scala 150:32]
@@ -758,12 +799,9 @@ module VendingMachine(
   wire [3:0] _GEN_44 = 2'h1 == selReg ? onesDigit : _GEN_41; // @[\\src\\main\\scala\\VendingMachine.scala 185:18 194:27]
   wire [6:0] _GEN_45 = 2'h1 == selReg ? _GEN_32 : _GEN_42; // @[\\src\\main\\scala\\VendingMachine.scala 185:18]
   wire [6:0] segOut = 2'h0 == selReg ? _GEN_30 : _GEN_45; // @[\\src\\main\\scala\\VendingMachine.scala 185:18]
-  reg  wasReleasing; // @[\\src\\main\\scala\\VendingMachine.scala 214:29]
-  wire  _GEN_49 = fsm_io_releaseCan | wasReleasing; // @[\\src\\main\\scala\\VendingMachine.scala 215:27 214:29 215:42]
-  reg  wasAlarming; // @[\\src\\main\\scala\\VendingMachine.scala 218:28]
-  wire  _GEN_51 = fsm_io_alarm | wasAlarming; // @[\\src\\main\\scala\\VendingMachine.scala 219:24 218:28 219:38]
   reg  uart_io_empty_REG; // @[\\src\\main\\scala\\VendingMachine.scala 86:58]
   reg  uart_io_full_REG; // @[\\src\\main\\scala\\VendingMachine.scala 86:58]
+  reg  uart_io_rtnCoin_REG; // @[\\src\\main\\scala\\VendingMachine.scala 86:58]
   SevenSegDec sevSegDecoder ( // @[\\src\\main\\scala\\VendingMachine.scala 92:29]
     .io_in(sevSegDecoder_io_in),
     .io_out(sevSegDecoder_io_out)
@@ -787,21 +825,22 @@ module VendingMachine(
     .io_alarm(fsm_io_alarm),
     .io_coinBeingRejected(fsm_io_coinBeingRejected)
   );
-  UartDisplay uart ( // @[\\src\\main\\scala\\VendingMachine.scala 222:20]
+  UartDisplay uart ( // @[\\src\\main\\scala\\VendingMachine.scala 215:20]
     .clock(uart_clock),
     .reset(uart_reset),
     .io_txd(uart_io_txd),
     .io_sold(uart_io_sold),
     .io_alarm(uart_io_alarm),
     .io_empty(uart_io_empty),
-    .io_full(uart_io_full)
+    .io_full(uart_io_full),
+    .io_rtnCoin(uart_io_rtnCoin)
   );
-  assign io_releaseCan = fsm_io_releaseCan & _coin2Edge_T_2; // @[\\src\\main\\scala\\VendingMachine.scala 232:38]
-  assign io_alarm = fsm_io_alarm & blinkReg; // @[\\src\\main\\scala\\VendingMachine.scala 233:28]
-  assign io_rejectCoinLED = (fsm_io_coinBeingRejected | showFull) & rejectReg; // @[\\src\\main\\scala\\VendingMachine.scala 234:62]
-  assign io_seg = ~segOut; // @[\\src\\main\\scala\\VendingMachine.scala 230:13]
+  assign io_releaseCan = fsm_io_releaseCan & _coin2Edge_T_2; // @[\\src\\main\\scala\\VendingMachine.scala 231:38]
+  assign io_alarm = fsm_io_alarm & blinkReg; // @[\\src\\main\\scala\\VendingMachine.scala 232:28]
+  assign io_rejectCoinLED = (fsm_io_coinBeingRejected | showFull) & rejectReg; // @[\\src\\main\\scala\\VendingMachine.scala 233:62]
+  assign io_seg = ~segOut; // @[\\src\\main\\scala\\VendingMachine.scala 229:13]
   assign io_an = 2'h0 == selReg ? _activeDigit_T : _GEN_43; // @[\\src\\main\\scala\\VendingMachine.scala 185:18 187:19]
-  assign io_txd = uart_io_txd; // @[\\src\\main\\scala\\VendingMachine.scala 227:10]
+  assign io_txd = uart_io_txd; // @[\\src\\main\\scala\\VendingMachine.scala 226:10]
   assign sevSegDecoder_io_in = 2'h0 == selReg ? tensDigit : _GEN_44; // @[\\src\\main\\scala\\VendingMachine.scala 185:18 188:27]
   assign fsm_clock = clock;
   assign fsm_reset = reset;
@@ -816,10 +855,11 @@ module VendingMachine(
   assign fsm_io_inpCoinBeingRej = fsm_io_inpCoinBeingRej_REG; // @[\\src\\main\\scala\\VendingMachine.scala 146:26]
   assign uart_clock = clock;
   assign uart_reset = reset;
-  assign uart_io_sold = buyFallingEdge & wasReleasing; // @[\\src\\main\\scala\\VendingMachine.scala 223:35]
-  assign uart_io_alarm = buyFallingEdge & wasAlarming; // @[\\src\\main\\scala\\VendingMachine.scala 224:35]
+  assign uart_io_sold = _T_25 & _coin2Edge_T_2; // @[\\src\\main\\scala\\VendingMachine.scala 218:58]
+  assign uart_io_alarm = buyFallingEdge & fsm_io_alarm; // @[\\src\\main\\scala\\VendingMachine.scala 219:37]
   assign uart_io_empty = canEmpty & ~uart_io_empty_REG; // @[\\src\\main\\scala\\VendingMachine.scala 86:47]
   assign uart_io_full = showFull & ~uart_io_full_REG; // @[\\src\\main\\scala\\VendingMachine.scala 86:47]
+  assign uart_io_rtnCoin = fsm_io_coinBeingRejected & ~uart_io_rtnCoin_REG; // @[\\src\\main\\scala\\VendingMachine.scala 86:47]
   always @(posedge clock) begin
     if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 29:27]
       totalMoney <= 8'h0; // @[\\src\\main\\scala\\VendingMachine.scala 29:27]
@@ -910,22 +950,9 @@ module VendingMachine(
     end else begin
       fsm_io_inpCoinBeingRej_REG <= _GEN_24;
     end
-    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 214:29]
-      wasReleasing <= 1'h0; // @[\\src\\main\\scala\\VendingMachine.scala 214:29]
-    end else if (buyFallingEdge) begin // @[\\src\\main\\scala\\VendingMachine.scala 216:27]
-      wasReleasing <= 1'h0; // @[\\src\\main\\scala\\VendingMachine.scala 216:42]
-    end else begin
-      wasReleasing <= _GEN_49;
-    end
-    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 218:28]
-      wasAlarming <= 1'h0; // @[\\src\\main\\scala\\VendingMachine.scala 218:28]
-    end else if (buyFallingEdge) begin // @[\\src\\main\\scala\\VendingMachine.scala 220:24]
-      wasAlarming <= 1'h0; // @[\\src\\main\\scala\\VendingMachine.scala 220:38]
-    end else begin
-      wasAlarming <= _GEN_51;
-    end
     uart_io_empty_REG <= canCount == 5'h0; // @[\\src\\main\\scala\\VendingMachine.scala 80:27]
     uart_io_full_REG <= fullDisplayCount > 4'h0; // @[\\src\\main\\scala\\VendingMachine.scala 68:35]
+    uart_io_rtnCoin_REG <= fsm_io_coinBeingRejected; // @[\\src\\main\\scala\\VendingMachine.scala 86:58]
   end
 // Register and memory initialization
 `ifdef RANDOMIZE_GARBAGE_ASSIGN
@@ -1002,13 +1029,11 @@ initial begin
   _RAND_18 = {1{`RANDOM}};
   fsm_io_inpCoinBeingRej_REG = _RAND_18[0:0];
   _RAND_19 = {1{`RANDOM}};
-  wasReleasing = _RAND_19[0:0];
+  uart_io_empty_REG = _RAND_19[0:0];
   _RAND_20 = {1{`RANDOM}};
-  wasAlarming = _RAND_20[0:0];
+  uart_io_full_REG = _RAND_20[0:0];
   _RAND_21 = {1{`RANDOM}};
-  uart_io_empty_REG = _RAND_21[0:0];
-  _RAND_22 = {1{`RANDOM}};
-  uart_io_full_REG = _RAND_22[0:0];
+  uart_io_rtnCoin_REG = _RAND_21[0:0];
 `endif // RANDOMIZE_REG_INIT
   `endif // RANDOMIZE
 end // initial

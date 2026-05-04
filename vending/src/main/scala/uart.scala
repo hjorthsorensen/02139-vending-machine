@@ -31,7 +31,7 @@ class Tx(frequency: Int, baudRate: Int) extends Module {
 
   val BIT_CNT = ((frequency + baudRate / 2) / baudRate - 1).asUInt
 
-  val shiftReg = RegInit(0x7ff.U)
+  val shiftReg = RegInit(0x3ff.U(10.W))
   val cntReg = RegInit(0.U(20.W))
   val bitsReg = RegInit(0.U(4.W))
 
@@ -43,15 +43,15 @@ class Tx(frequency: Int, baudRate: Int) extends Module {
     cntReg := BIT_CNT
     when(bitsReg =/= 0.U) {
       val shift = shiftReg >> 1
-      shiftReg := 1.U ## shift(9, 0)
+      shiftReg := 1.U ## shift(8, 0)
       bitsReg := bitsReg - 1.U
     } .otherwise {
       when(io.channel.valid) {
         // two stop bits, data, one start bit
-        shiftReg := 3.U ## io.channel.bits ## 0.U
-        bitsReg := 11.U
+        shiftReg := 1.U ## io.channel.bits ## 0.U
+        bitsReg := 10.U
       } .otherwise {
-        shiftReg := 0x7ff.U
+        shiftReg := 0x3ff.U
       }
     }
 
@@ -227,5 +227,5 @@ class UartMain(frequency: Int, baudRate: Int) extends Module {
 }
 
 object UartMain extends App {
-  emitVerilog(new UartMain(50000000, 115200), Array("--target-dir", "generated"))
+  emitVerilog(new UartMain(100000000, 115200), Array("--target-dir", "generated"))
 }
