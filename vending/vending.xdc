@@ -72,3 +72,6 @@ set_property PACKAGE_PIN U2 [get_ports {io_an[0]}]
 set_property PACKAGE_PIN U4 [get_ports {io_an[1]}]
 set_property PACKAGE_PIN V4 [get_ports {io_an[2]}]
 set_property PACKAGE_PIN W4 [get_ports {io_an[3]}]
+
+## UART
+set_property PACKAGE_PIN A18 [get_ports {io_txd}]

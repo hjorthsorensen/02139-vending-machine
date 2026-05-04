@@ -4,6 +4,19 @@
     "emitter":"firrtl.VerilogEmitter"
   },
   {
+    "class":"chisel3.experimental.EnumAnnotations$EnumDefAnnotation",
+    "typeName":"uart.Buffer$State",
+    "definition":{
+      "empty":0,
+      "full":1
+    }
+  },
+  {
+    "class":"chisel3.experimental.EnumAnnotations$EnumComponentAnnotation",
+    "target":"VendingMachine.Buffer.stateReg",
+    "enumTypeName":"uart.Buffer$State"
+  },
+  {
     "class":"firrtl.transforms.BlackBoxTargetDirAnno",
     "targetDir":"."
   },

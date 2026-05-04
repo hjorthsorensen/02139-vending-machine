@@ -124,18 +124,501 @@ end // initial
 `endif
 `endif // SYNTHESIS
 endmodule
+module Tx(
+  input        clock,
+  input        reset,
+  output       io_txd, // @[\\src\\main\\scala\\uart.scala 27:14]
+  output       io_channel_ready, // @[\\src\\main\\scala\\uart.scala 27:14]
+  input        io_channel_valid, // @[\\src\\main\\scala\\uart.scala 27:14]
+  input  [7:0] io_channel_bits // @[\\src\\main\\scala\\uart.scala 27:14]
+);
+`ifdef RANDOMIZE_REG_INIT
+  reg [31:0] _RAND_0;
+  reg [31:0] _RAND_1;
+  reg [31:0] _RAND_2;
+`endif // RANDOMIZE_REG_INIT
+  reg [10:0] shiftReg; // @[\\src\\main\\scala\\uart.scala 34:25]
+  reg [19:0] cntReg; // @[\\src\\main\\scala\\uart.scala 35:23]
+  reg [3:0] bitsReg; // @[\\src\\main\\scala\\uart.scala 36:24]
+  wire  _io_channel_ready_T = cntReg == 20'h0; // @[\\src\\main\\scala\\uart.scala 38:31]
+  wire [9:0] shift = shiftReg[10:1]; // @[\\src\\main\\scala\\uart.scala 45:28]
+  wire [10:0] _shiftReg_T_1 = {1'h1,shift}; // @[\\src\\main\\scala\\uart.scala 46:23]
+  wire [3:0] _bitsReg_T_1 = bitsReg - 4'h1; // @[\\src\\main\\scala\\uart.scala 47:26]
+  wire [10:0] _shiftReg_T_3 = {2'h3,io_channel_bits,1'h0}; // @[\\src\\main\\scala\\uart.scala 51:44]
+  wire [19:0] _cntReg_T_1 = cntReg - 20'h1; // @[\\src\\main\\scala\\uart.scala 59:22]
+  assign io_txd = shiftReg[0]; // @[\\src\\main\\scala\\uart.scala 39:21]
+  assign io_channel_ready = cntReg == 20'h0 & bitsReg == 4'h0; // @[\\src\\main\\scala\\uart.scala 38:40]
+  always @(posedge clock) begin
+    if (reset) begin // @[\\src\\main\\scala\\uart.scala 34:25]
+      shiftReg <= 11'h7ff; // @[\\src\\main\\scala\\uart.scala 34:25]
+    end else if (_io_channel_ready_T) begin // @[\\src\\main\\scala\\uart.scala 41:24]
+      if (bitsReg != 4'h0) begin // @[\\src\\main\\scala\\uart.scala 44:27]
+        shiftReg <= _shiftReg_T_1; // @[\\src\\main\\scala\\uart.scala 46:16]
+      end else if (io_channel_valid) begin // @[\\src\\main\\scala\\uart.scala 49:30]
+        shiftReg <= _shiftReg_T_3; // @[\\src\\main\\scala\\uart.scala 51:18]
+      end else begin
+        shiftReg <= 11'h7ff; // @[\\src\\main\\scala\\uart.scala 54:18]
+      end
+    end
+    if (reset) begin // @[\\src\\main\\scala\\uart.scala 35:23]
+      cntReg <= 20'h0; // @[\\src\\main\\scala\\uart.scala 35:23]
+    end else if (_io_channel_ready_T) begin // @[\\src\\main\\scala\\uart.scala 41:24]
+      cntReg <= 20'h363; // @[\\src\\main\\scala\\uart.scala 43:12]
+    end else begin
+      cntReg <= _cntReg_T_1; // @[\\src\\main\\scala\\uart.scala 59:12]
+    end
+    if (reset) begin // @[\\src\\main\\scala\\uart.scala 36:24]
+      bitsReg <= 4'h0; // @[\\src\\main\\scala\\uart.scala 36:24]
+    end else if (_io_channel_ready_T) begin // @[\\src\\main\\scala\\uart.scala 41:24]
+      if (bitsReg != 4'h0) begin // @[\\src\\main\\scala\\uart.scala 44:27]
+        bitsReg <= _bitsReg_T_1; // @[\\src\\main\\scala\\uart.scala 47:15]
+      end else if (io_channel_valid) begin // @[\\src\\main\\scala\\uart.scala 49:30]
+        bitsReg <= 4'hb; // @[\\src\\main\\scala\\uart.scala 52:17]
+      end
+    end
+  end
+// Register and memory initialization
+`ifdef RANDOMIZE_GARBAGE_ASSIGN
+`define RANDOMIZE
+`endif
+`ifdef RANDOMIZE_INVALID_ASSIGN
+`define RANDOMIZE
+`endif
+`ifdef RANDOMIZE_REG_INIT
+`define RANDOMIZE
+`endif
+`ifdef RANDOMIZE_MEM_INIT
+`define RANDOMIZE
+`endif
+`ifndef RANDOM
+`define RANDOM $random
+`endif
+`ifdef RANDOMIZE_MEM_INIT
+  integer initvar;
+`endif
+`ifndef SYNTHESIS
+`ifdef FIRRTL_BEFORE_INITIAL
+`FIRRTL_BEFORE_INITIAL
+`endif
+initial begin
+  `ifdef RANDOMIZE
+    `ifdef INIT_RANDOM
+      `INIT_RANDOM
+    `endif
+    `ifndef VERILATOR
+      `ifdef RANDOMIZE_DELAY
+        #`RANDOMIZE_DELAY begin end
+      `else
+        #0.002 begin end
+      `endif
+    `endif
+`ifdef RANDOMIZE_REG_INIT
+  _RAND_0 = {1{`RANDOM}};
+  shiftReg = _RAND_0[10:0];
+  _RAND_1 = {1{`RANDOM}};
+  cntReg = _RAND_1[19:0];
+  _RAND_2 = {1{`RANDOM}};
+  bitsReg = _RAND_2[3:0];
+`endif // RANDOMIZE_REG_INIT
+  `endif // RANDOMIZE
+end // initial
+`ifdef FIRRTL_AFTER_INITIAL
+`FIRRTL_AFTER_INITIAL
+`endif
+`endif // SYNTHESIS
+endmodule
+module Buffer(
+  input        clock,
+  input        reset,
+  output       io_in_ready, // @[\\src\\main\\scala\\uart.scala 120:14]
+  input        io_in_valid, // @[\\src\\main\\scala\\uart.scala 120:14]
+  input  [7:0] io_in_bits, // @[\\src\\main\\scala\\uart.scala 120:14]
+  input        io_out_ready, // @[\\src\\main\\scala\\uart.scala 120:14]
+  output       io_out_valid, // @[\\src\\main\\scala\\uart.scala 120:14]
+  output [7:0] io_out_bits // @[\\src\\main\\scala\\uart.scala 120:14]
+);
+`ifdef RANDOMIZE_REG_INIT
+  reg [31:0] _RAND_0;
+  reg [31:0] _RAND_1;
+`endif // RANDOMIZE_REG_INIT
+  reg  stateReg; // @[\\src\\main\\scala\\uart.scala 130:25]
+  reg [7:0] dataReg; // @[\\src\\main\\scala\\uart.scala 131:24]
+  wire  _io_in_ready_T = ~stateReg; // @[\\src\\main\\scala\\uart.scala 133:27]
+  wire  _GEN_1 = io_in_valid | stateReg; // @[\\src\\main\\scala\\uart.scala 137:23 139:16 130:25]
+  assign io_in_ready = ~stateReg; // @[\\src\\main\\scala\\uart.scala 133:27]
+  assign io_out_valid = stateReg; // @[\\src\\main\\scala\\uart.scala 134:28]
+  assign io_out_bits = dataReg; // @[\\src\\main\\scala\\uart.scala 146:15]
+  always @(posedge clock) begin
+    if (reset) begin // @[\\src\\main\\scala\\uart.scala 130:25]
+      stateReg <= 1'h0; // @[\\src\\main\\scala\\uart.scala 130:25]
+    end else if (_io_in_ready_T) begin // @[\\src\\main\\scala\\uart.scala 136:28]
+      stateReg <= _GEN_1;
+    end else if (io_out_ready) begin // @[\\src\\main\\scala\\uart.scala 142:24]
+      stateReg <= 1'h0; // @[\\src\\main\\scala\\uart.scala 143:16]
+    end
+    if (reset) begin // @[\\src\\main\\scala\\uart.scala 131:24]
+      dataReg <= 8'h0; // @[\\src\\main\\scala\\uart.scala 131:24]
+    end else if (_io_in_ready_T) begin // @[\\src\\main\\scala\\uart.scala 136:28]
+      if (io_in_valid) begin // @[\\src\\main\\scala\\uart.scala 137:23]
+        dataReg <= io_in_bits; // @[\\src\\main\\scala\\uart.scala 138:15]
+      end
+    end
+  end
+// Register and memory initialization
+`ifdef RANDOMIZE_GARBAGE_ASSIGN
+`define RANDOMIZE
+`endif
+`ifdef RANDOMIZE_INVALID_ASSIGN
+`define RANDOMIZE
+`endif
+`ifdef RANDOMIZE_REG_INIT
+`define RANDOMIZE
+`endif
+`ifdef RANDOMIZE_MEM_INIT
+`define RANDOMIZE
+`endif
+`ifndef RANDOM
+`define RANDOM $random
+`endif
+`ifdef RANDOMIZE_MEM_INIT
+  integer initvar;
+`endif
+`ifndef SYNTHESIS
+`ifdef FIRRTL_BEFORE_INITIAL
+`FIRRTL_BEFORE_INITIAL
+`endif
+initial begin
+  `ifdef RANDOMIZE
+    `ifdef INIT_RANDOM
+      `INIT_RANDOM
+    `endif
+    `ifndef VERILATOR
+      `ifdef RANDOMIZE_DELAY
+        #`RANDOMIZE_DELAY begin end
+      `else
+        #0.002 begin end
+      `endif
+    `endif
+`ifdef RANDOMIZE_REG_INIT
+  _RAND_0 = {1{`RANDOM}};
+  stateReg = _RAND_0[0:0];
+  _RAND_1 = {1{`RANDOM}};
+  dataReg = _RAND_1[7:0];
+`endif // RANDOMIZE_REG_INIT
+  `endif // RANDOMIZE
+end // initial
+`ifdef FIRRTL_AFTER_INITIAL
+`FIRRTL_AFTER_INITIAL
+`endif
+`endif // SYNTHESIS
+endmodule
+module BufferedTx(
+  input        clock,
+  input        reset,
+  output       io_txd, // @[\\src\\main\\scala\\uart.scala 155:14]
+  output       io_channel_ready, // @[\\src\\main\\scala\\uart.scala 155:14]
+  input        io_channel_valid, // @[\\src\\main\\scala\\uart.scala 155:14]
+  input  [7:0] io_channel_bits // @[\\src\\main\\scala\\uart.scala 155:14]
+);
+  wire  tx_clock; // @[\\src\\main\\scala\\uart.scala 159:18]
+  wire  tx_reset; // @[\\src\\main\\scala\\uart.scala 159:18]
+  wire  tx_io_txd; // @[\\src\\main\\scala\\uart.scala 159:18]
+  wire  tx_io_channel_ready; // @[\\src\\main\\scala\\uart.scala 159:18]
+  wire  tx_io_channel_valid; // @[\\src\\main\\scala\\uart.scala 159:18]
+  wire [7:0] tx_io_channel_bits; // @[\\src\\main\\scala\\uart.scala 159:18]
+  wire  buf__clock; // @[\\src\\main\\scala\\uart.scala 160:19]
+  wire  buf__reset; // @[\\src\\main\\scala\\uart.scala 160:19]
+  wire  buf__io_in_ready; // @[\\src\\main\\scala\\uart.scala 160:19]
+  wire  buf__io_in_valid; // @[\\src\\main\\scala\\uart.scala 160:19]
+  wire [7:0] buf__io_in_bits; // @[\\src\\main\\scala\\uart.scala 160:19]
+  wire  buf__io_out_ready; // @[\\src\\main\\scala\\uart.scala 160:19]
+  wire  buf__io_out_valid; // @[\\src\\main\\scala\\uart.scala 160:19]
+  wire [7:0] buf__io_out_bits; // @[\\src\\main\\scala\\uart.scala 160:19]
+  Tx tx ( // @[\\src\\main\\scala\\uart.scala 159:18]
+    .clock(tx_clock),
+    .reset(tx_reset),
+    .io_txd(tx_io_txd),
+    .io_channel_ready(tx_io_channel_ready),
+    .io_channel_valid(tx_io_channel_valid),
+    .io_channel_bits(tx_io_channel_bits)
+  );
+  Buffer buf_ ( // @[\\src\\main\\scala\\uart.scala 160:19]
+    .clock(buf__clock),
+    .reset(buf__reset),
+    .io_in_ready(buf__io_in_ready),
+    .io_in_valid(buf__io_in_valid),
+    .io_in_bits(buf__io_in_bits),
+    .io_out_ready(buf__io_out_ready),
+    .io_out_valid(buf__io_out_valid),
+    .io_out_bits(buf__io_out_bits)
+  );
+  assign io_txd = tx_io_txd; // @[\\src\\main\\scala\\uart.scala 164:10]
+  assign io_channel_ready = buf__io_in_ready; // @[\\src\\main\\scala\\uart.scala 162:13]
+  assign tx_clock = clock;
+  assign tx_reset = reset;
+  assign tx_io_channel_valid = buf__io_out_valid; // @[\\src\\main\\scala\\uart.scala 163:17]
+  assign tx_io_channel_bits = buf__io_out_bits; // @[\\src\\main\\scala\\uart.scala 163:17]
+  assign buf__clock = clock;
+  assign buf__reset = reset;
+  assign buf__io_in_valid = io_channel_valid; // @[\\src\\main\\scala\\uart.scala 162:13]
+  assign buf__io_in_bits = io_channel_bits; // @[\\src\\main\\scala\\uart.scala 162:13]
+  assign buf__io_out_ready = tx_io_channel_ready; // @[\\src\\main\\scala\\uart.scala 163:17]
+endmodule
+module UartDisplay(
+  input   clock,
+  input   reset,
+  output  io_txd, // @[\\src\\main\\scala\\UartDisplay.scala 6:16]
+  input   io_sold, // @[\\src\\main\\scala\\UartDisplay.scala 6:16]
+  input   io_alarm, // @[\\src\\main\\scala\\UartDisplay.scala 6:16]
+  input   io_empty, // @[\\src\\main\\scala\\UartDisplay.scala 6:16]
+  input   io_full // @[\\src\\main\\scala\\UartDisplay.scala 6:16]
+);
+`ifdef RANDOMIZE_REG_INIT
+  reg [31:0] _RAND_0;
+  reg [31:0] _RAND_1;
+  reg [31:0] _RAND_2;
+  reg [31:0] _RAND_3;
+  reg [31:0] _RAND_4;
+  reg [31:0] _RAND_5;
+  reg [31:0] _RAND_6;
+`endif // RANDOMIZE_REG_INIT
+  wire  tx_clock; // @[\\src\\main\\scala\\UartDisplay.scala 14:20]
+  wire  tx_reset; // @[\\src\\main\\scala\\UartDisplay.scala 14:20]
+  wire  tx_io_txd; // @[\\src\\main\\scala\\UartDisplay.scala 14:20]
+  wire  tx_io_channel_ready; // @[\\src\\main\\scala\\UartDisplay.scala 14:20]
+  wire  tx_io_channel_valid; // @[\\src\\main\\scala\\UartDisplay.scala 14:20]
+  wire [7:0] tx_io_channel_bits; // @[\\src\\main\\scala\\UartDisplay.scala 14:20]
+  reg [1:0] msgSel; // @[\\src\\main\\scala\\UartDisplay.scala 33:29]
+  reg [7:0] cntReg; // @[\\src\\main\\scala\\UartDisplay.scala 34:29]
+  reg  sendingReg; // @[\\src\\main\\scala\\UartDisplay.scala 35:29]
+  reg  soldEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 37:41]
+  wire  soldEdge = io_sold & ~soldEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 37:30]
+  reg  alarmEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 38:41]
+  wire  alarmEdge = io_alarm & ~alarmEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 38:30]
+  reg  emptyEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 39:41]
+  wire  emptyEdge = io_empty & ~emptyEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 39:30]
+  reg  fullEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 40:41]
+  wire  fullEdge = io_full & ~fullEdge_REG; // @[\\src\\main\\scala\\UartDisplay.scala 40:30]
+  wire [1:0] _GEN_0 = soldEdge ? 2'h0 : msgSel; // @[\\src\\main\\scala\\UartDisplay.scala 42:20 33:29 42:29]
+  wire [7:0] _GEN_1 = soldEdge ? 8'h0 : cntReg; // @[\\src\\main\\scala\\UartDisplay.scala 42:20 34:29 42:45]
+  wire  _GEN_2 = soldEdge | sendingReg; // @[\\src\\main\\scala\\UartDisplay.scala 42:20 35:29 42:65]
+  wire [7:0] _GEN_4 = alarmEdge ? 8'h0 : _GEN_1; // @[\\src\\main\\scala\\UartDisplay.scala 43:{21,46}]
+  wire  _GEN_5 = alarmEdge | _GEN_2; // @[\\src\\main\\scala\\UartDisplay.scala 43:{21,66}]
+  wire  _GEN_8 = emptyEdge | _GEN_5; // @[\\src\\main\\scala\\UartDisplay.scala 44:{21,66}]
+  wire  _GEN_11 = fullEdge | _GEN_8; // @[\\src\\main\\scala\\UartDisplay.scala 45:{21,66}]
+  wire [6:0] _tx_io_channel_bits_T = msgSel * 5'h16; // @[\\src\\main\\scala\\UartDisplay.scala 47:45]
+  wire [7:0] _GEN_100 = {{1'd0}, _tx_io_channel_bits_T}; // @[\\src\\main\\scala\\UartDisplay.scala 47:57]
+  wire [7:0] _tx_io_channel_bits_T_2 = _GEN_100 + cntReg; // @[\\src\\main\\scala\\UartDisplay.scala 47:57]
+  wire [7:0] _GEN_13 = 7'h1 == _tx_io_channel_bits_T_2[6:0] ? 8'h74 : 8'h49; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_14 = 7'h2 == _tx_io_channel_bits_T_2[6:0] ? 8'h65 : _GEN_13; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_15 = 7'h3 == _tx_io_channel_bits_T_2[6:0] ? 8'h6d : _GEN_14; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_16 = 7'h4 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_15; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_17 = 7'h5 == _tx_io_channel_bits_T_2[6:0] ? 8'h73 : _GEN_16; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_18 = 7'h6 == _tx_io_channel_bits_T_2[6:0] ? 8'h6f : _GEN_17; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_19 = 7'h7 == _tx_io_channel_bits_T_2[6:0] ? 8'h6c : _GEN_18; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_20 = 7'h8 == _tx_io_channel_bits_T_2[6:0] ? 8'h64 : _GEN_19; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_21 = 7'h9 == _tx_io_channel_bits_T_2[6:0] ? 8'h21 : _GEN_20; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_22 = 7'ha == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_21; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_23 = 7'hb == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_22; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_24 = 7'hc == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_23; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_25 = 7'hd == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_24; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_26 = 7'he == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_25; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_27 = 7'hf == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_26; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_28 = 7'h10 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_27; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_29 = 7'h11 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_28; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_30 = 7'h12 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_29; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_31 = 7'h13 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_30; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_32 = 7'h14 == _tx_io_channel_bits_T_2[6:0] ? 8'ha : _GEN_31; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_33 = 7'h15 == _tx_io_channel_bits_T_2[6:0] ? 8'h4e : _GEN_32; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_34 = 7'h16 == _tx_io_channel_bits_T_2[6:0] ? 8'h6f : _GEN_33; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_35 = 7'h17 == _tx_io_channel_bits_T_2[6:0] ? 8'h74 : _GEN_34; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_36 = 7'h18 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_35; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_37 = 7'h19 == _tx_io_channel_bits_T_2[6:0] ? 8'h65 : _GEN_36; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_38 = 7'h1a == _tx_io_channel_bits_T_2[6:0] ? 8'h6e : _GEN_37; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_39 = 7'h1b == _tx_io_channel_bits_T_2[6:0] ? 8'h6f : _GEN_38; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_40 = 7'h1c == _tx_io_channel_bits_T_2[6:0] ? 8'h75 : _GEN_39; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_41 = 7'h1d == _tx_io_channel_bits_T_2[6:0] ? 8'h67 : _GEN_40; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_42 = 7'h1e == _tx_io_channel_bits_T_2[6:0] ? 8'h68 : _GEN_41; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_43 = 7'h1f == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_42; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_44 = 7'h20 == _tx_io_channel_bits_T_2[6:0] ? 8'h6d : _GEN_43; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_45 = 7'h21 == _tx_io_channel_bits_T_2[6:0] ? 8'h6f : _GEN_44; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_46 = 7'h22 == _tx_io_channel_bits_T_2[6:0] ? 8'h6e : _GEN_45; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_47 = 7'h23 == _tx_io_channel_bits_T_2[6:0] ? 8'h65 : _GEN_46; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_48 = 7'h24 == _tx_io_channel_bits_T_2[6:0] ? 8'h79 : _GEN_47; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_49 = 7'h25 == _tx_io_channel_bits_T_2[6:0] ? 8'h21 : _GEN_48; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_50 = 7'h26 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_49; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_51 = 7'h27 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_50; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_52 = 7'h28 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_51; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_53 = 7'h29 == _tx_io_channel_bits_T_2[6:0] ? 8'ha : _GEN_52; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_54 = 7'h2a == _tx_io_channel_bits_T_2[6:0] ? 8'h4d : _GEN_53; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_55 = 7'h2b == _tx_io_channel_bits_T_2[6:0] ? 8'h61 : _GEN_54; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_56 = 7'h2c == _tx_io_channel_bits_T_2[6:0] ? 8'h63 : _GEN_55; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_57 = 7'h2d == _tx_io_channel_bits_T_2[6:0] ? 8'h68 : _GEN_56; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_58 = 7'h2e == _tx_io_channel_bits_T_2[6:0] ? 8'h69 : _GEN_57; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_59 = 7'h2f == _tx_io_channel_bits_T_2[6:0] ? 8'h6e : _GEN_58; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_60 = 7'h30 == _tx_io_channel_bits_T_2[6:0] ? 8'h65 : _GEN_59; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_61 = 7'h31 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_60; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_62 = 7'h32 == _tx_io_channel_bits_T_2[6:0] ? 8'h65 : _GEN_61; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_63 = 7'h33 == _tx_io_channel_bits_T_2[6:0] ? 8'h6d : _GEN_62; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_64 = 7'h34 == _tx_io_channel_bits_T_2[6:0] ? 8'h70 : _GEN_63; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_65 = 7'h35 == _tx_io_channel_bits_T_2[6:0] ? 8'h74 : _GEN_64; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_66 = 7'h36 == _tx_io_channel_bits_T_2[6:0] ? 8'h79 : _GEN_65; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_67 = 7'h37 == _tx_io_channel_bits_T_2[6:0] ? 8'h21 : _GEN_66; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_68 = 7'h38 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_67; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_69 = 7'h39 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_68; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_70 = 7'h3a == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_69; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_71 = 7'h3b == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_70; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_72 = 7'h3c == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_71; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_73 = 7'h3d == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_72; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_74 = 7'h3e == _tx_io_channel_bits_T_2[6:0] ? 8'ha : _GEN_73; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_75 = 7'h3f == _tx_io_channel_bits_T_2[6:0] ? 8'h43 : _GEN_74; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_76 = 7'h40 == _tx_io_channel_bits_T_2[6:0] ? 8'h6f : _GEN_75; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_77 = 7'h41 == _tx_io_channel_bits_T_2[6:0] ? 8'h69 : _GEN_76; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_78 = 7'h42 == _tx_io_channel_bits_T_2[6:0] ? 8'h6e : _GEN_77; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_79 = 7'h43 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_78; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_80 = 7'h44 == _tx_io_channel_bits_T_2[6:0] ? 8'h66 : _GEN_79; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_81 = 7'h45 == _tx_io_channel_bits_T_2[6:0] ? 8'h75 : _GEN_80; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_82 = 7'h46 == _tx_io_channel_bits_T_2[6:0] ? 8'h6c : _GEN_81; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_83 = 7'h47 == _tx_io_channel_bits_T_2[6:0] ? 8'h6c : _GEN_82; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_84 = 7'h48 == _tx_io_channel_bits_T_2[6:0] ? 8'h21 : _GEN_83; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_85 = 7'h49 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_84; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_86 = 7'h4a == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_85; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_87 = 7'h4b == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_86; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_88 = 7'h4c == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_87; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_89 = 7'h4d == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_88; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_90 = 7'h4e == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_89; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_91 = 7'h4f == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_90; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_92 = 7'h50 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_91; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_93 = 7'h51 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_92; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _GEN_94 = 7'h52 == _tx_io_channel_bits_T_2[6:0] ? 8'h20 : _GEN_93; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  wire [7:0] _cntReg_T_1 = cntReg + 8'h1; // @[\\src\\main\\scala\\UartDisplay.scala 55:30]
+  BufferedTx tx ( // @[\\src\\main\\scala\\UartDisplay.scala 14:20]
+    .clock(tx_clock),
+    .reset(tx_reset),
+    .io_txd(tx_io_txd),
+    .io_channel_ready(tx_io_channel_ready),
+    .io_channel_valid(tx_io_channel_valid),
+    .io_channel_bits(tx_io_channel_bits)
+  );
+  assign io_txd = tx_io_txd; // @[\\src\\main\\scala\\UartDisplay.scala 15:12]
+  assign tx_clock = clock;
+  assign tx_reset = reset;
+  assign tx_io_channel_valid = sendingReg; // @[\\src\\main\\scala\\UartDisplay.scala 48:25]
+  assign tx_io_channel_bits = 7'h53 == _tx_io_channel_bits_T_2[6:0] ? 8'ha : _GEN_94; // @[\\src\\main\\scala\\UartDisplay.scala 47:{25,25}]
+  always @(posedge clock) begin
+    if (reset) begin // @[\\src\\main\\scala\\UartDisplay.scala 33:29]
+      msgSel <= 2'h0; // @[\\src\\main\\scala\\UartDisplay.scala 33:29]
+    end else if (fullEdge) begin // @[\\src\\main\\scala\\UartDisplay.scala 45:21]
+      msgSel <= 2'h3; // @[\\src\\main\\scala\\UartDisplay.scala 45:30]
+    end else if (emptyEdge) begin // @[\\src\\main\\scala\\UartDisplay.scala 44:21]
+      msgSel <= 2'h2; // @[\\src\\main\\scala\\UartDisplay.scala 44:30]
+    end else if (alarmEdge) begin // @[\\src\\main\\scala\\UartDisplay.scala 43:21]
+      msgSel <= 2'h1; // @[\\src\\main\\scala\\UartDisplay.scala 43:30]
+    end else begin
+      msgSel <= _GEN_0;
+    end
+    if (reset) begin // @[\\src\\main\\scala\\UartDisplay.scala 34:29]
+      cntReg <= 8'h0; // @[\\src\\main\\scala\\UartDisplay.scala 34:29]
+    end else if (tx_io_channel_ready & sendingReg) begin // @[\\src\\main\\scala\\UartDisplay.scala 50:45]
+      if (cntReg == 8'h15) begin // @[\\src\\main\\scala\\UartDisplay.scala 51:41]
+        cntReg <= 8'h0; // @[\\src\\main\\scala\\UartDisplay.scala 53:20]
+      end else begin
+        cntReg <= _cntReg_T_1; // @[\\src\\main\\scala\\UartDisplay.scala 55:20]
+      end
+    end else if (fullEdge) begin // @[\\src\\main\\scala\\UartDisplay.scala 45:21]
+      cntReg <= 8'h0; // @[\\src\\main\\scala\\UartDisplay.scala 45:46]
+    end else if (emptyEdge) begin // @[\\src\\main\\scala\\UartDisplay.scala 44:21]
+      cntReg <= 8'h0; // @[\\src\\main\\scala\\UartDisplay.scala 44:46]
+    end else begin
+      cntReg <= _GEN_4;
+    end
+    if (reset) begin // @[\\src\\main\\scala\\UartDisplay.scala 35:29]
+      sendingReg <= 1'h0; // @[\\src\\main\\scala\\UartDisplay.scala 35:29]
+    end else if (tx_io_channel_ready & sendingReg) begin // @[\\src\\main\\scala\\UartDisplay.scala 50:45]
+      if (cntReg == 8'h15) begin // @[\\src\\main\\scala\\UartDisplay.scala 51:41]
+        sendingReg <= 1'h0; // @[\\src\\main\\scala\\UartDisplay.scala 52:24]
+      end else begin
+        sendingReg <= _GEN_11;
+      end
+    end else begin
+      sendingReg <= _GEN_11;
+    end
+    soldEdge_REG <= io_sold; // @[\\src\\main\\scala\\UartDisplay.scala 37:41]
+    alarmEdge_REG <= io_alarm; // @[\\src\\main\\scala\\UartDisplay.scala 38:41]
+    emptyEdge_REG <= io_empty; // @[\\src\\main\\scala\\UartDisplay.scala 39:41]
+    fullEdge_REG <= io_full; // @[\\src\\main\\scala\\UartDisplay.scala 40:41]
+  end
+// Register and memory initialization
+`ifdef RANDOMIZE_GARBAGE_ASSIGN
+`define RANDOMIZE
+`endif
+`ifdef RANDOMIZE_INVALID_ASSIGN
+`define RANDOMIZE
+`endif
+`ifdef RANDOMIZE_REG_INIT
+`define RANDOMIZE
+`endif
+`ifdef RANDOMIZE_MEM_INIT
+`define RANDOMIZE
+`endif
+`ifndef RANDOM
+`define RANDOM $random
+`endif
+`ifdef RANDOMIZE_MEM_INIT
+  integer initvar;
+`endif
+`ifndef SYNTHESIS
+`ifdef FIRRTL_BEFORE_INITIAL
+`FIRRTL_BEFORE_INITIAL
+`endif
+initial begin
+  `ifdef RANDOMIZE
+    `ifdef INIT_RANDOM
+      `INIT_RANDOM
+    `endif
+    `ifndef VERILATOR
+      `ifdef RANDOMIZE_DELAY
+        #`RANDOMIZE_DELAY begin end
+      `else
+        #0.002 begin end
+      `endif
+    `endif
+`ifdef RANDOMIZE_REG_INIT
+  _RAND_0 = {1{`RANDOM}};
+  msgSel = _RAND_0[1:0];
+  _RAND_1 = {1{`RANDOM}};
+  cntReg = _RAND_1[7:0];
+  _RAND_2 = {1{`RANDOM}};
+  sendingReg = _RAND_2[0:0];
+  _RAND_3 = {1{`RANDOM}};
+  soldEdge_REG = _RAND_3[0:0];
+  _RAND_4 = {1{`RANDOM}};
+  alarmEdge_REG = _RAND_4[0:0];
+  _RAND_5 = {1{`RANDOM}};
+  emptyEdge_REG = _RAND_5[0:0];
+  _RAND_6 = {1{`RANDOM}};
+  fullEdge_REG = _RAND_6[0:0];
+`endif // RANDOMIZE_REG_INIT
+  `endif // RANDOMIZE
+end // initial
+`ifdef FIRRTL_AFTER_INITIAL
+`FIRRTL_AFTER_INITIAL
+`endif
+`endif // SYNTHESIS
+endmodule
 module VendingMachine(
   input        clock,
   input        reset,
-  input  [4:0] io_price, // @[\\src\\main\\scala\\VendingMachine.scala 5:14]
-  input        io_coin2, // @[\\src\\main\\scala\\VendingMachine.scala 5:14]
-  input        io_coin5, // @[\\src\\main\\scala\\VendingMachine.scala 5:14]
-  input        io_buy, // @[\\src\\main\\scala\\VendingMachine.scala 5:14]
-  output       io_releaseCan, // @[\\src\\main\\scala\\VendingMachine.scala 5:14]
-  output       io_alarm, // @[\\src\\main\\scala\\VendingMachine.scala 5:14]
-  output       io_rejectCoinLED, // @[\\src\\main\\scala\\VendingMachine.scala 5:14]
-  output [6:0] io_seg, // @[\\src\\main\\scala\\VendingMachine.scala 5:14]
-  output [3:0] io_an // @[\\src\\main\\scala\\VendingMachine.scala 5:14]
+  input  [4:0] io_price, // @[\\src\\main\\scala\\VendingMachine.scala 6:14]
+  input        io_coin2, // @[\\src\\main\\scala\\VendingMachine.scala 6:14]
+  input        io_coin5, // @[\\src\\main\\scala\\VendingMachine.scala 6:14]
+  input        io_buy, // @[\\src\\main\\scala\\VendingMachine.scala 6:14]
+  output       io_releaseCan, // @[\\src\\main\\scala\\VendingMachine.scala 6:14]
+  output       io_alarm, // @[\\src\\main\\scala\\VendingMachine.scala 6:14]
+  output       io_rejectCoinLED, // @[\\src\\main\\scala\\VendingMachine.scala 6:14]
+  output [6:0] io_seg, // @[\\src\\main\\scala\\VendingMachine.scala 6:14]
+  output [3:0] io_an, // @[\\src\\main\\scala\\VendingMachine.scala 6:14]
+  output       io_txd // @[\\src\\main\\scala\\VendingMachine.scala 6:14]
 );
 `ifdef RANDOMIZE_REG_INIT
   reg [31:0] _RAND_0;
@@ -157,118 +640,135 @@ module VendingMachine(
   reg [31:0] _RAND_16;
   reg [31:0] _RAND_17;
   reg [31:0] _RAND_18;
+  reg [31:0] _RAND_19;
+  reg [31:0] _RAND_20;
+  reg [31:0] _RAND_21;
+  reg [31:0] _RAND_22;
 `endif // RANDOMIZE_REG_INIT
-  wire [3:0] sevSegDecoder_io_in; // @[\\src\\main\\scala\\VendingMachine.scala 83:29]
-  wire [6:0] sevSegDecoder_io_out; // @[\\src\\main\\scala\\VendingMachine.scala 83:29]
-  wire  fsm_clock; // @[\\src\\main\\scala\\VendingMachine.scala 110:19]
-  wire  fsm_reset; // @[\\src\\main\\scala\\VendingMachine.scala 110:19]
-  wire  fsm_io_coin2Edge; // @[\\src\\main\\scala\\VendingMachine.scala 110:19]
-  wire  fsm_io_coin5Edge; // @[\\src\\main\\scala\\VendingMachine.scala 110:19]
-  wire  fsm_io_buyEdge; // @[\\src\\main\\scala\\VendingMachine.scala 110:19]
-  wire  fsm_io_buy; // @[\\src\\main\\scala\\VendingMachine.scala 110:19]
-  wire  fsm_io_coin2; // @[\\src\\main\\scala\\VendingMachine.scala 110:19]
-  wire  fsm_io_coin5; // @[\\src\\main\\scala\\VendingMachine.scala 110:19]
-  wire [7:0] fsm_io_totalMoney; // @[\\src\\main\\scala\\VendingMachine.scala 110:19]
-  wire [7:0] fsm_io_itemPrice; // @[\\src\\main\\scala\\VendingMachine.scala 110:19]
-  wire  fsm_io_inpCoinBeingRej; // @[\\src\\main\\scala\\VendingMachine.scala 110:19]
-  wire  fsm_io_signalCoin2; // @[\\src\\main\\scala\\VendingMachine.scala 110:19]
-  wire  fsm_io_signalCoin5; // @[\\src\\main\\scala\\VendingMachine.scala 110:19]
-  wire  fsm_io_signalSub; // @[\\src\\main\\scala\\VendingMachine.scala 110:19]
-  wire  fsm_io_releaseCan; // @[\\src\\main\\scala\\VendingMachine.scala 110:19]
-  wire  fsm_io_alarm; // @[\\src\\main\\scala\\VendingMachine.scala 110:19]
-  wire  fsm_io_coinBeingRejected; // @[\\src\\main\\scala\\VendingMachine.scala 110:19]
-  reg [7:0] totalMoney; // @[\\src\\main\\scala\\VendingMachine.scala 20:27]
-  wire [7:0] _GEN_26 = totalMoney % 8'ha; // @[\\src\\main\\scala\\VendingMachine.scala 21:30]
-  wire [3:0] onesDigit = _GEN_26[3:0]; // @[\\src\\main\\scala\\VendingMachine.scala 21:30]
-  wire [7:0] _tensDigit_T = totalMoney / 4'ha; // @[\\src\\main\\scala\\VendingMachine.scala 22:31]
-  wire [7:0] _GEN_46 = _tensDigit_T % 8'ha; // @[\\src\\main\\scala\\VendingMachine.scala 22:39]
-  wire [3:0] tensDigit = _GEN_46[3:0]; // @[\\src\\main\\scala\\VendingMachine.scala 22:39]
-  wire [4:0] _GEN_0 = 5'h9 == io_price ? 5'h11 : 5'h0; // @[\\src\\main\\scala\\VendingMachine.scala 27:13 28:20 37:25]
-  wire [4:0] _GEN_1 = 5'h8 == io_price ? 5'ha : _GEN_0; // @[\\src\\main\\scala\\VendingMachine.scala 28:20 36:25]
-  wire [4:0] _GEN_2 = 5'h7 == io_price ? 5'he : _GEN_1; // @[\\src\\main\\scala\\VendingMachine.scala 28:20 35:25]
-  wire [4:0] _GEN_3 = 5'h6 == io_price ? 5'h14 : _GEN_2; // @[\\src\\main\\scala\\VendingMachine.scala 28:20 34:25]
-  wire [4:0] _GEN_4 = 5'h5 == io_price ? 5'h12 : _GEN_3; // @[\\src\\main\\scala\\VendingMachine.scala 28:20 33:25]
-  wire [4:0] _GEN_5 = 5'h4 == io_price ? 5'h11 : _GEN_4; // @[\\src\\main\\scala\\VendingMachine.scala 28:20 32:25]
-  wire [4:0] _GEN_6 = 5'h3 == io_price ? 5'h7 : _GEN_5; // @[\\src\\main\\scala\\VendingMachine.scala 28:20 31:25]
-  wire [4:0] _GEN_7 = 5'h2 == io_price ? 5'h4 : _GEN_6; // @[\\src\\main\\scala\\VendingMachine.scala 28:20 30:25]
-  wire [4:0] _GEN_8 = 5'h1 == io_price ? 5'h4 : _GEN_7; // @[\\src\\main\\scala\\VendingMachine.scala 28:20 29:25]
-  wire [7:0] itemPrice = {{3'd0}, _GEN_8}; // @[\\src\\main\\scala\\VendingMachine.scala 26:23]
-  wire [7:0] _GEN_47 = itemPrice % 8'ha; // @[\\src\\main\\scala\\VendingMachine.scala 40:29]
-  wire [3:0] priceOnes = _GEN_47[3:0]; // @[\\src\\main\\scala\\VendingMachine.scala 40:29]
-  wire [7:0] _priceTens_T = itemPrice / 4'ha; // @[\\src\\main\\scala\\VendingMachine.scala 41:30]
-  wire [7:0] _GEN_48 = _priceTens_T % 8'ha; // @[\\src\\main\\scala\\VendingMachine.scala 41:38]
-  wire [3:0] priceTens = _GEN_48[3:0]; // @[\\src\\main\\scala\\VendingMachine.scala 41:38]
-  reg [31:0] blinkCounter; // @[\\src\\main\\scala\\VendingMachine.scala 46:29]
-  reg  blinkReg; // @[\\src\\main\\scala\\VendingMachine.scala 47:25]
-  reg [31:0] cntReg; // @[\\src\\main\\scala\\VendingMachine.scala 50:23]
-  reg [1:0] selReg; // @[\\src\\main\\scala\\VendingMachine.scala 51:23]
-  reg [5:0] coin2Count; // @[\\src\\main\\scala\\VendingMachine.scala 55:27]
-  reg [5:0] coin5Count; // @[\\src\\main\\scala\\VendingMachine.scala 56:27]
-  wire  coinFull = coin2Count >= 6'h3f | coin5Count >= 6'h3f; // @[\\src\\main\\scala\\VendingMachine.scala 57:37]
-  reg [3:0] fullDisplayCount; // @[\\src\\main\\scala\\VendingMachine.scala 58:33]
-  wire  showFull = fullDisplayCount > 4'h0; // @[\\src\\main\\scala\\VendingMachine.scala 59:35]
-  reg  REG; // @[\\src\\main\\scala\\VendingMachine.scala 77:58]
-  wire  _T_10 = io_coin2 & ~REG; // @[\\src\\main\\scala\\VendingMachine.scala 77:47]
-  reg  REG_1; // @[\\src\\main\\scala\\VendingMachine.scala 77:58]
-  wire  _T_13 = io_coin5 & ~REG_1; // @[\\src\\main\\scala\\VendingMachine.scala 77:47]
-  reg  REG_2; // @[\\src\\main\\scala\\VendingMachine.scala 64:28]
-  wire [3:0] _fullDisplayCount_T_1 = fullDisplayCount - 4'h1; // @[\\src\\main\\scala\\VendingMachine.scala 65:42]
-  reg [4:0] canCount; // @[\\src\\main\\scala\\VendingMachine.scala 70:25]
-  wire  canEmpty = canCount == 5'h0; // @[\\src\\main\\scala\\VendingMachine.scala 71:27]
-  reg  buyFallingEdge_REG; // @[\\src\\main\\scala\\VendingMachine.scala 72:42]
-  wire  buyFallingEdge = ~io_buy & buyFallingEdge_REG; // @[\\src\\main\\scala\\VendingMachine.scala 72:32]
-  reg  coin2Edge_REG; // @[\\src\\main\\scala\\VendingMachine.scala 77:58]
-  wire  _coin2Edge_T_1 = io_coin2 & ~coin2Edge_REG; // @[\\src\\main\\scala\\VendingMachine.scala 77:47]
-  wire  _coin2Edge_T_2 = ~canEmpty; // @[\\src\\main\\scala\\VendingMachine.scala 78:43]
-  wire  _coin2Edge_T_4 = ~coinFull; // @[\\src\\main\\scala\\VendingMachine.scala 78:56]
-  reg  coin5Edge_REG; // @[\\src\\main\\scala\\VendingMachine.scala 77:58]
-  wire  _coin5Edge_T_1 = io_coin5 & ~coin5Edge_REG; // @[\\src\\main\\scala\\VendingMachine.scala 77:47]
-  reg  buyEdge_REG; // @[\\src\\main\\scala\\VendingMachine.scala 77:58]
-  wire  _buyEdge_T_1 = io_buy & ~buyEdge_REG; // @[\\src\\main\\scala\\VendingMachine.scala 77:47]
-  reg [31:0] rejectCounter; // @[\\src\\main\\scala\\VendingMachine.scala 89:30]
-  reg  rejectReg; // @[\\src\\main\\scala\\VendingMachine.scala 90:26]
-  wire [31:0] _rejectCounter_T_1 = rejectCounter + 32'h1; // @[\\src\\main\\scala\\VendingMachine.scala 92:34]
-  wire [31:0] _blinkCounter_T_1 = blinkCounter + 32'h1; // @[\\src\\main\\scala\\VendingMachine.scala 101:32]
-  wire  _blinkReg_T = ~blinkReg; // @[\\src\\main\\scala\\VendingMachine.scala 104:17]
-  wire  _T_21 = totalMoney <= 8'h61; // @[\\src\\main\\scala\\VendingMachine.scala 124:41]
-  wire [5:0] _coin2Count_T_1 = coin2Count + 6'h1; // @[\\src\\main\\scala\\VendingMachine.scala 125:30]
-  wire  _T_23 = totalMoney <= 8'h5e; // @[\\src\\main\\scala\\VendingMachine.scala 127:41]
-  wire [5:0] _coin5Count_T_1 = coin5Count + 6'h1; // @[\\src\\main\\scala\\VendingMachine.scala 128:30]
-  wire [4:0] _canCount_T_1 = canCount - 5'h1; // @[\\src\\main\\scala\\VendingMachine.scala 132:26]
-  reg  fsm_io_inpCoinBeingRej_REG; // @[\\src\\main\\scala\\VendingMachine.scala 137:36]
-  wire [7:0] _totalMoney_T_1 = totalMoney + 8'h2; // @[\\src\\main\\scala\\VendingMachine.scala 141:32]
-  wire [7:0] _totalMoney_T_3 = totalMoney + 8'h5; // @[\\src\\main\\scala\\VendingMachine.scala 147:32]
-  wire  _GEN_21 = _T_23 ? 1'h0 : 1'h1; // @[\\src\\main\\scala\\VendingMachine.scala 146:30 136:31 149:18]
-  wire [7:0] _totalMoney_T_5 = totalMoney - itemPrice; // @[\\src\\main\\scala\\VendingMachine.scala 152:30]
-  wire  _GEN_24 = fsm_io_signalCoin5 & _GEN_21; // @[\\src\\main\\scala\\VendingMachine.scala 136:31 145:35]
-  wire [31:0] _cntReg_T_1 = cntReg + 32'h1; // @[\\src\\main\\scala\\VendingMachine.scala 156:20]
-  wire [1:0] _selReg_T_1 = selReg + 2'h1; // @[\\src\\main\\scala\\VendingMachine.scala 159:22]
-  wire  blinkDuringAlarm = fsm_io_alarm & _blinkReg_T; // @[\\src\\main\\scala\\VendingMachine.scala 173:40]
-  wire [3:0] _activeDigit_T = blinkDuringAlarm ? 4'hf : 4'h7; // @[\\src\\main\\scala\\VendingMachine.scala 178:25]
-  wire [6:0] _GEN_29 = canEmpty ? 7'h79 : sevSegDecoder_io_out; // @[\\src\\main\\scala\\VendingMachine.scala 180:22 175:27 180:30]
-  wire [6:0] _GEN_30 = showFull ? 7'h71 : _GEN_29; // @[\\src\\main\\scala\\VendingMachine.scala 181:{22,30}]
-  wire [3:0] _activeDigit_T_1 = blinkDuringAlarm ? 4'hf : 4'hb; // @[\\src\\main\\scala\\VendingMachine.scala 184:25]
-  wire [6:0] _GEN_31 = canEmpty ? 7'h73 : sevSegDecoder_io_out; // @[\\src\\main\\scala\\VendingMachine.scala 186:22 175:27 186:30]
-  wire [6:0] _GEN_32 = showFull ? 7'h3e : _GEN_31; // @[\\src\\main\\scala\\VendingMachine.scala 187:{22,30}]
-  wire [6:0] _GEN_33 = canEmpty ? 7'h78 : sevSegDecoder_io_out; // @[\\src\\main\\scala\\VendingMachine.scala 192:22 175:27 192:30]
-  wire [6:0] _GEN_34 = showFull ? 7'h38 : _GEN_33; // @[\\src\\main\\scala\\VendingMachine.scala 193:{22,30}]
-  wire [6:0] _GEN_35 = canEmpty ? 7'h6e : sevSegDecoder_io_out; // @[\\src\\main\\scala\\VendingMachine.scala 198:22 175:27 198:30]
-  wire [6:0] _GEN_36 = showFull ? 7'h38 : _GEN_35; // @[\\src\\main\\scala\\VendingMachine.scala 199:{22,30}]
-  wire [3:0] _GEN_37 = 2'h3 == selReg ? 4'he : 4'hf; // @[\\src\\main\\scala\\VendingMachine.scala 176:18 196:19 84:32]
-  wire [3:0] _GEN_38 = 2'h3 == selReg ? priceOnes : 4'h0; // @[\\src\\main\\scala\\VendingMachine.scala 176:18 197:27 85:23]
-  wire [6:0] _GEN_39 = 2'h3 == selReg ? _GEN_36 : sevSegDecoder_io_out; // @[\\src\\main\\scala\\VendingMachine.scala 176:18 175:27]
-  wire [3:0] _GEN_40 = 2'h2 == selReg ? 4'hd : _GEN_37; // @[\\src\\main\\scala\\VendingMachine.scala 176:18 190:19]
-  wire [3:0] _GEN_41 = 2'h2 == selReg ? priceTens : _GEN_38; // @[\\src\\main\\scala\\VendingMachine.scala 176:18 191:27]
-  wire [6:0] _GEN_42 = 2'h2 == selReg ? _GEN_34 : _GEN_39; // @[\\src\\main\\scala\\VendingMachine.scala 176:18]
-  wire [3:0] _GEN_43 = 2'h1 == selReg ? _activeDigit_T_1 : _GEN_40; // @[\\src\\main\\scala\\VendingMachine.scala 176:18 184:19]
-  wire [3:0] _GEN_44 = 2'h1 == selReg ? onesDigit : _GEN_41; // @[\\src\\main\\scala\\VendingMachine.scala 176:18 185:27]
-  wire [6:0] _GEN_45 = 2'h1 == selReg ? _GEN_32 : _GEN_42; // @[\\src\\main\\scala\\VendingMachine.scala 176:18]
-  wire [6:0] segOut = 2'h0 == selReg ? _GEN_30 : _GEN_45; // @[\\src\\main\\scala\\VendingMachine.scala 176:18]
-  SevenSegDec sevSegDecoder ( // @[\\src\\main\\scala\\VendingMachine.scala 83:29]
+  wire [3:0] sevSegDecoder_io_in; // @[\\src\\main\\scala\\VendingMachine.scala 92:29]
+  wire [6:0] sevSegDecoder_io_out; // @[\\src\\main\\scala\\VendingMachine.scala 92:29]
+  wire  fsm_clock; // @[\\src\\main\\scala\\VendingMachine.scala 119:19]
+  wire  fsm_reset; // @[\\src\\main\\scala\\VendingMachine.scala 119:19]
+  wire  fsm_io_coin2Edge; // @[\\src\\main\\scala\\VendingMachine.scala 119:19]
+  wire  fsm_io_coin5Edge; // @[\\src\\main\\scala\\VendingMachine.scala 119:19]
+  wire  fsm_io_buyEdge; // @[\\src\\main\\scala\\VendingMachine.scala 119:19]
+  wire  fsm_io_buy; // @[\\src\\main\\scala\\VendingMachine.scala 119:19]
+  wire  fsm_io_coin2; // @[\\src\\main\\scala\\VendingMachine.scala 119:19]
+  wire  fsm_io_coin5; // @[\\src\\main\\scala\\VendingMachine.scala 119:19]
+  wire [7:0] fsm_io_totalMoney; // @[\\src\\main\\scala\\VendingMachine.scala 119:19]
+  wire [7:0] fsm_io_itemPrice; // @[\\src\\main\\scala\\VendingMachine.scala 119:19]
+  wire  fsm_io_inpCoinBeingRej; // @[\\src\\main\\scala\\VendingMachine.scala 119:19]
+  wire  fsm_io_signalCoin2; // @[\\src\\main\\scala\\VendingMachine.scala 119:19]
+  wire  fsm_io_signalCoin5; // @[\\src\\main\\scala\\VendingMachine.scala 119:19]
+  wire  fsm_io_signalSub; // @[\\src\\main\\scala\\VendingMachine.scala 119:19]
+  wire  fsm_io_releaseCan; // @[\\src\\main\\scala\\VendingMachine.scala 119:19]
+  wire  fsm_io_alarm; // @[\\src\\main\\scala\\VendingMachine.scala 119:19]
+  wire  fsm_io_coinBeingRejected; // @[\\src\\main\\scala\\VendingMachine.scala 119:19]
+  wire  uart_clock; // @[\\src\\main\\scala\\VendingMachine.scala 222:20]
+  wire  uart_reset; // @[\\src\\main\\scala\\VendingMachine.scala 222:20]
+  wire  uart_io_txd; // @[\\src\\main\\scala\\VendingMachine.scala 222:20]
+  wire  uart_io_sold; // @[\\src\\main\\scala\\VendingMachine.scala 222:20]
+  wire  uart_io_alarm; // @[\\src\\main\\scala\\VendingMachine.scala 222:20]
+  wire  uart_io_empty; // @[\\src\\main\\scala\\VendingMachine.scala 222:20]
+  wire  uart_io_full; // @[\\src\\main\\scala\\VendingMachine.scala 222:20]
+  reg [7:0] totalMoney; // @[\\src\\main\\scala\\VendingMachine.scala 29:27]
+  wire [7:0] _GEN_26 = totalMoney % 8'ha; // @[\\src\\main\\scala\\VendingMachine.scala 30:30]
+  wire [3:0] onesDigit = _GEN_26[3:0]; // @[\\src\\main\\scala\\VendingMachine.scala 30:30]
+  wire [7:0] _tensDigit_T = totalMoney / 4'ha; // @[\\src\\main\\scala\\VendingMachine.scala 31:31]
+  wire [7:0] _GEN_46 = _tensDigit_T % 8'ha; // @[\\src\\main\\scala\\VendingMachine.scala 31:39]
+  wire [3:0] tensDigit = _GEN_46[3:0]; // @[\\src\\main\\scala\\VendingMachine.scala 31:39]
+  wire [4:0] _GEN_0 = 5'h9 == io_price ? 5'h11 : 5'h0; // @[\\src\\main\\scala\\VendingMachine.scala 36:13 37:20 46:25]
+  wire [4:0] _GEN_1 = 5'h8 == io_price ? 5'ha : _GEN_0; // @[\\src\\main\\scala\\VendingMachine.scala 37:20 45:25]
+  wire [4:0] _GEN_2 = 5'h7 == io_price ? 5'he : _GEN_1; // @[\\src\\main\\scala\\VendingMachine.scala 37:20 44:25]
+  wire [4:0] _GEN_3 = 5'h6 == io_price ? 5'h14 : _GEN_2; // @[\\src\\main\\scala\\VendingMachine.scala 37:20 43:25]
+  wire [4:0] _GEN_4 = 5'h5 == io_price ? 5'h12 : _GEN_3; // @[\\src\\main\\scala\\VendingMachine.scala 37:20 42:25]
+  wire [4:0] _GEN_5 = 5'h4 == io_price ? 5'h11 : _GEN_4; // @[\\src\\main\\scala\\VendingMachine.scala 37:20 41:25]
+  wire [4:0] _GEN_6 = 5'h3 == io_price ? 5'h7 : _GEN_5; // @[\\src\\main\\scala\\VendingMachine.scala 37:20 40:25]
+  wire [4:0] _GEN_7 = 5'h2 == io_price ? 5'h4 : _GEN_6; // @[\\src\\main\\scala\\VendingMachine.scala 37:20 39:25]
+  wire [4:0] _GEN_8 = 5'h1 == io_price ? 5'h4 : _GEN_7; // @[\\src\\main\\scala\\VendingMachine.scala 37:20 38:25]
+  wire [7:0] itemPrice = {{3'd0}, _GEN_8}; // @[\\src\\main\\scala\\VendingMachine.scala 35:23]
+  wire [7:0] _GEN_47 = itemPrice % 8'ha; // @[\\src\\main\\scala\\VendingMachine.scala 49:29]
+  wire [3:0] priceOnes = _GEN_47[3:0]; // @[\\src\\main\\scala\\VendingMachine.scala 49:29]
+  wire [7:0] _priceTens_T = itemPrice / 4'ha; // @[\\src\\main\\scala\\VendingMachine.scala 50:30]
+  wire [7:0] _GEN_48 = _priceTens_T % 8'ha; // @[\\src\\main\\scala\\VendingMachine.scala 50:38]
+  wire [3:0] priceTens = _GEN_48[3:0]; // @[\\src\\main\\scala\\VendingMachine.scala 50:38]
+  reg [31:0] blinkCounter; // @[\\src\\main\\scala\\VendingMachine.scala 55:29]
+  reg  blinkReg; // @[\\src\\main\\scala\\VendingMachine.scala 56:25]
+  reg [31:0] cntReg; // @[\\src\\main\\scala\\VendingMachine.scala 59:23]
+  reg [1:0] selReg; // @[\\src\\main\\scala\\VendingMachine.scala 60:23]
+  reg [5:0] coin2Count; // @[\\src\\main\\scala\\VendingMachine.scala 64:27]
+  reg [5:0] coin5Count; // @[\\src\\main\\scala\\VendingMachine.scala 65:27]
+  wire  coinFull = coin2Count >= 6'h3f | coin5Count >= 6'h3f; // @[\\src\\main\\scala\\VendingMachine.scala 66:37]
+  reg [3:0] fullDisplayCount; // @[\\src\\main\\scala\\VendingMachine.scala 67:33]
+  wire  showFull = fullDisplayCount > 4'h0; // @[\\src\\main\\scala\\VendingMachine.scala 68:35]
+  reg  REG; // @[\\src\\main\\scala\\VendingMachine.scala 86:58]
+  wire  _T_10 = io_coin2 & ~REG; // @[\\src\\main\\scala\\VendingMachine.scala 86:47]
+  reg  REG_1; // @[\\src\\main\\scala\\VendingMachine.scala 86:58]
+  wire  _T_13 = io_coin5 & ~REG_1; // @[\\src\\main\\scala\\VendingMachine.scala 86:47]
+  reg  REG_2; // @[\\src\\main\\scala\\VendingMachine.scala 73:28]
+  wire [3:0] _fullDisplayCount_T_1 = fullDisplayCount - 4'h1; // @[\\src\\main\\scala\\VendingMachine.scala 74:42]
+  reg [4:0] canCount; // @[\\src\\main\\scala\\VendingMachine.scala 79:25]
+  wire  canEmpty = canCount == 5'h0; // @[\\src\\main\\scala\\VendingMachine.scala 80:27]
+  reg  buyFallingEdge_REG; // @[\\src\\main\\scala\\VendingMachine.scala 81:42]
+  wire  buyFallingEdge = ~io_buy & buyFallingEdge_REG; // @[\\src\\main\\scala\\VendingMachine.scala 81:32]
+  reg  coin2Edge_REG; // @[\\src\\main\\scala\\VendingMachine.scala 86:58]
+  wire  _coin2Edge_T_1 = io_coin2 & ~coin2Edge_REG; // @[\\src\\main\\scala\\VendingMachine.scala 86:47]
+  wire  _coin2Edge_T_2 = ~canEmpty; // @[\\src\\main\\scala\\VendingMachine.scala 87:43]
+  wire  _coin2Edge_T_4 = ~coinFull; // @[\\src\\main\\scala\\VendingMachine.scala 87:56]
+  reg  coin5Edge_REG; // @[\\src\\main\\scala\\VendingMachine.scala 86:58]
+  wire  _coin5Edge_T_1 = io_coin5 & ~coin5Edge_REG; // @[\\src\\main\\scala\\VendingMachine.scala 86:47]
+  reg  buyEdge_REG; // @[\\src\\main\\scala\\VendingMachine.scala 86:58]
+  wire  _buyEdge_T_1 = io_buy & ~buyEdge_REG; // @[\\src\\main\\scala\\VendingMachine.scala 86:47]
+  reg [31:0] rejectCounter; // @[\\src\\main\\scala\\VendingMachine.scala 98:30]
+  reg  rejectReg; // @[\\src\\main\\scala\\VendingMachine.scala 99:26]
+  wire [31:0] _rejectCounter_T_1 = rejectCounter + 32'h1; // @[\\src\\main\\scala\\VendingMachine.scala 101:34]
+  wire [31:0] _blinkCounter_T_1 = blinkCounter + 32'h1; // @[\\src\\main\\scala\\VendingMachine.scala 110:32]
+  wire  _blinkReg_T = ~blinkReg; // @[\\src\\main\\scala\\VendingMachine.scala 113:17]
+  wire  _T_21 = totalMoney <= 8'h61; // @[\\src\\main\\scala\\VendingMachine.scala 133:41]
+  wire [5:0] _coin2Count_T_1 = coin2Count + 6'h1; // @[\\src\\main\\scala\\VendingMachine.scala 134:30]
+  wire  _T_23 = totalMoney <= 8'h5e; // @[\\src\\main\\scala\\VendingMachine.scala 136:41]
+  wire [5:0] _coin5Count_T_1 = coin5Count + 6'h1; // @[\\src\\main\\scala\\VendingMachine.scala 137:30]
+  wire [4:0] _canCount_T_1 = canCount - 5'h1; // @[\\src\\main\\scala\\VendingMachine.scala 141:26]
+  reg  fsm_io_inpCoinBeingRej_REG; // @[\\src\\main\\scala\\VendingMachine.scala 146:36]
+  wire [7:0] _totalMoney_T_1 = totalMoney + 8'h2; // @[\\src\\main\\scala\\VendingMachine.scala 150:32]
+  wire [7:0] _totalMoney_T_3 = totalMoney + 8'h5; // @[\\src\\main\\scala\\VendingMachine.scala 156:32]
+  wire  _GEN_21 = _T_23 ? 1'h0 : 1'h1; // @[\\src\\main\\scala\\VendingMachine.scala 155:30 145:31 158:18]
+  wire [7:0] _totalMoney_T_5 = totalMoney - itemPrice; // @[\\src\\main\\scala\\VendingMachine.scala 161:30]
+  wire  _GEN_24 = fsm_io_signalCoin5 & _GEN_21; // @[\\src\\main\\scala\\VendingMachine.scala 145:31 154:35]
+  wire [31:0] _cntReg_T_1 = cntReg + 32'h1; // @[\\src\\main\\scala\\VendingMachine.scala 165:20]
+  wire [1:0] _selReg_T_1 = selReg + 2'h1; // @[\\src\\main\\scala\\VendingMachine.scala 168:22]
+  wire  blinkDuringAlarm = fsm_io_alarm & _blinkReg_T; // @[\\src\\main\\scala\\VendingMachine.scala 182:40]
+  wire [3:0] _activeDigit_T = blinkDuringAlarm ? 4'hf : 4'h7; // @[\\src\\main\\scala\\VendingMachine.scala 187:25]
+  wire [6:0] _GEN_29 = canEmpty ? 7'h79 : sevSegDecoder_io_out; // @[\\src\\main\\scala\\VendingMachine.scala 189:22 184:27 189:30]
+  wire [6:0] _GEN_30 = showFull ? 7'h71 : _GEN_29; // @[\\src\\main\\scala\\VendingMachine.scala 190:{22,30}]
+  wire [3:0] _activeDigit_T_1 = blinkDuringAlarm ? 4'hf : 4'hb; // @[\\src\\main\\scala\\VendingMachine.scala 193:25]
+  wire [6:0] _GEN_31 = canEmpty ? 7'h73 : sevSegDecoder_io_out; // @[\\src\\main\\scala\\VendingMachine.scala 195:22 184:27 195:30]
+  wire [6:0] _GEN_32 = showFull ? 7'h3e : _GEN_31; // @[\\src\\main\\scala\\VendingMachine.scala 196:{22,30}]
+  wire [6:0] _GEN_33 = canEmpty ? 7'h78 : sevSegDecoder_io_out; // @[\\src\\main\\scala\\VendingMachine.scala 201:22 184:27 201:30]
+  wire [6:0] _GEN_34 = showFull ? 7'h38 : _GEN_33; // @[\\src\\main\\scala\\VendingMachine.scala 202:{22,30}]
+  wire [6:0] _GEN_35 = canEmpty ? 7'h6e : sevSegDecoder_io_out; // @[\\src\\main\\scala\\VendingMachine.scala 207:22 184:27 207:30]
+  wire [6:0] _GEN_36 = showFull ? 7'h38 : _GEN_35; // @[\\src\\main\\scala\\VendingMachine.scala 208:{22,30}]
+  wire [3:0] _GEN_37 = 2'h3 == selReg ? 4'he : 4'hf; // @[\\src\\main\\scala\\VendingMachine.scala 185:18 205:19 93:32]
+  wire [3:0] _GEN_38 = 2'h3 == selReg ? priceOnes : 4'h0; // @[\\src\\main\\scala\\VendingMachine.scala 185:18 206:27 94:23]
+  wire [6:0] _GEN_39 = 2'h3 == selReg ? _GEN_36 : sevSegDecoder_io_out; // @[\\src\\main\\scala\\VendingMachine.scala 185:18 184:27]
+  wire [3:0] _GEN_40 = 2'h2 == selReg ? 4'hd : _GEN_37; // @[\\src\\main\\scala\\VendingMachine.scala 185:18 199:19]
+  wire [3:0] _GEN_41 = 2'h2 == selReg ? priceTens : _GEN_38; // @[\\src\\main\\scala\\VendingMachine.scala 185:18 200:27]
+  wire [6:0] _GEN_42 = 2'h2 == selReg ? _GEN_34 : _GEN_39; // @[\\src\\main\\scala\\VendingMachine.scala 185:18]
+  wire [3:0] _GEN_43 = 2'h1 == selReg ? _activeDigit_T_1 : _GEN_40; // @[\\src\\main\\scala\\VendingMachine.scala 185:18 193:19]
+  wire [3:0] _GEN_44 = 2'h1 == selReg ? onesDigit : _GEN_41; // @[\\src\\main\\scala\\VendingMachine.scala 185:18 194:27]
+  wire [6:0] _GEN_45 = 2'h1 == selReg ? _GEN_32 : _GEN_42; // @[\\src\\main\\scala\\VendingMachine.scala 185:18]
+  wire [6:0] segOut = 2'h0 == selReg ? _GEN_30 : _GEN_45; // @[\\src\\main\\scala\\VendingMachine.scala 185:18]
+  reg  wasReleasing; // @[\\src\\main\\scala\\VendingMachine.scala 214:29]
+  wire  _GEN_49 = fsm_io_releaseCan | wasReleasing; // @[\\src\\main\\scala\\VendingMachine.scala 215:27 214:29 215:42]
+  reg  wasAlarming; // @[\\src\\main\\scala\\VendingMachine.scala 218:28]
+  wire  _GEN_51 = fsm_io_alarm | wasAlarming; // @[\\src\\main\\scala\\VendingMachine.scala 219:24 218:28 219:38]
+  reg  uart_io_empty_REG; // @[\\src\\main\\scala\\VendingMachine.scala 86:58]
+  reg  uart_io_full_REG; // @[\\src\\main\\scala\\VendingMachine.scala 86:58]
+  SevenSegDec sevSegDecoder ( // @[\\src\\main\\scala\\VendingMachine.scala 92:29]
     .io_in(sevSegDecoder_io_in),
     .io_out(sevSegDecoder_io_out)
   );
-  VendingFSM fsm ( // @[\\src\\main\\scala\\VendingMachine.scala 110:19]
+  VendingFSM fsm ( // @[\\src\\main\\scala\\VendingMachine.scala 119:19]
     .clock(fsm_clock),
     .reset(fsm_reset),
     .io_coin2Edge(fsm_io_coin2Edge),
@@ -287,113 +787,145 @@ module VendingMachine(
     .io_alarm(fsm_io_alarm),
     .io_coinBeingRejected(fsm_io_coinBeingRejected)
   );
-  assign io_releaseCan = fsm_io_releaseCan & _coin2Edge_T_2; // @[\\src\\main\\scala\\VendingMachine.scala 208:38]
-  assign io_alarm = fsm_io_alarm & blinkReg; // @[\\src\\main\\scala\\VendingMachine.scala 209:28]
-  assign io_rejectCoinLED = (fsm_io_coinBeingRejected | showFull) & rejectReg; // @[\\src\\main\\scala\\VendingMachine.scala 210:62]
-  assign io_seg = ~segOut; // @[\\src\\main\\scala\\VendingMachine.scala 206:13]
-  assign io_an = 2'h0 == selReg ? _activeDigit_T : _GEN_43; // @[\\src\\main\\scala\\VendingMachine.scala 176:18 178:19]
-  assign sevSegDecoder_io_in = 2'h0 == selReg ? tensDigit : _GEN_44; // @[\\src\\main\\scala\\VendingMachine.scala 176:18 179:27]
+  UartDisplay uart ( // @[\\src\\main\\scala\\VendingMachine.scala 222:20]
+    .clock(uart_clock),
+    .reset(uart_reset),
+    .io_txd(uart_io_txd),
+    .io_sold(uart_io_sold),
+    .io_alarm(uart_io_alarm),
+    .io_empty(uart_io_empty),
+    .io_full(uart_io_full)
+  );
+  assign io_releaseCan = fsm_io_releaseCan & _coin2Edge_T_2; // @[\\src\\main\\scala\\VendingMachine.scala 232:38]
+  assign io_alarm = fsm_io_alarm & blinkReg; // @[\\src\\main\\scala\\VendingMachine.scala 233:28]
+  assign io_rejectCoinLED = (fsm_io_coinBeingRejected | showFull) & rejectReg; // @[\\src\\main\\scala\\VendingMachine.scala 234:62]
+  assign io_seg = ~segOut; // @[\\src\\main\\scala\\VendingMachine.scala 230:13]
+  assign io_an = 2'h0 == selReg ? _activeDigit_T : _GEN_43; // @[\\src\\main\\scala\\VendingMachine.scala 185:18 187:19]
+  assign io_txd = uart_io_txd; // @[\\src\\main\\scala\\VendingMachine.scala 227:10]
+  assign sevSegDecoder_io_in = 2'h0 == selReg ? tensDigit : _GEN_44; // @[\\src\\main\\scala\\VendingMachine.scala 185:18 188:27]
   assign fsm_clock = clock;
   assign fsm_reset = reset;
-  assign fsm_io_coin2Edge = _coin2Edge_T_1 & ~canEmpty & ~coinFull; // @[\\src\\main\\scala\\VendingMachine.scala 78:53]
-  assign fsm_io_coin5Edge = _coin5Edge_T_1 & _coin2Edge_T_2 & _coin2Edge_T_4; // @[\\src\\main\\scala\\VendingMachine.scala 79:53]
-  assign fsm_io_buyEdge = _buyEdge_T_1 & _coin2Edge_T_2; // @[\\src\\main\\scala\\VendingMachine.scala 80:38]
-  assign fsm_io_buy = io_buy; // @[\\src\\main\\scala\\VendingMachine.scala 114:20]
-  assign fsm_io_coin2 = io_coin2; // @[\\src\\main\\scala\\VendingMachine.scala 115:20]
-  assign fsm_io_coin5 = io_coin5; // @[\\src\\main\\scala\\VendingMachine.scala 116:20]
-  assign fsm_io_totalMoney = totalMoney; // @[\\src\\main\\scala\\VendingMachine.scala 117:21]
-  assign fsm_io_itemPrice = {{3'd0}, _GEN_8}; // @[\\src\\main\\scala\\VendingMachine.scala 26:23]
-  assign fsm_io_inpCoinBeingRej = fsm_io_inpCoinBeingRej_REG; // @[\\src\\main\\scala\\VendingMachine.scala 137:26]
+  assign fsm_io_coin2Edge = _coin2Edge_T_1 & ~canEmpty & ~coinFull; // @[\\src\\main\\scala\\VendingMachine.scala 87:53]
+  assign fsm_io_coin5Edge = _coin5Edge_T_1 & _coin2Edge_T_2 & _coin2Edge_T_4; // @[\\src\\main\\scala\\VendingMachine.scala 88:53]
+  assign fsm_io_buyEdge = _buyEdge_T_1 & _coin2Edge_T_2; // @[\\src\\main\\scala\\VendingMachine.scala 89:38]
+  assign fsm_io_buy = io_buy; // @[\\src\\main\\scala\\VendingMachine.scala 123:20]
+  assign fsm_io_coin2 = io_coin2; // @[\\src\\main\\scala\\VendingMachine.scala 124:20]
+  assign fsm_io_coin5 = io_coin5; // @[\\src\\main\\scala\\VendingMachine.scala 125:20]
+  assign fsm_io_totalMoney = totalMoney; // @[\\src\\main\\scala\\VendingMachine.scala 126:21]
+  assign fsm_io_itemPrice = {{3'd0}, _GEN_8}; // @[\\src\\main\\scala\\VendingMachine.scala 35:23]
+  assign fsm_io_inpCoinBeingRej = fsm_io_inpCoinBeingRej_REG; // @[\\src\\main\\scala\\VendingMachine.scala 146:26]
+  assign uart_clock = clock;
+  assign uart_reset = reset;
+  assign uart_io_sold = buyFallingEdge & wasReleasing; // @[\\src\\main\\scala\\VendingMachine.scala 223:35]
+  assign uart_io_alarm = buyFallingEdge & wasAlarming; // @[\\src\\main\\scala\\VendingMachine.scala 224:35]
+  assign uart_io_empty = canEmpty & ~uart_io_empty_REG; // @[\\src\\main\\scala\\VendingMachine.scala 86:47]
+  assign uart_io_full = showFull & ~uart_io_full_REG; // @[\\src\\main\\scala\\VendingMachine.scala 86:47]
   always @(posedge clock) begin
-    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 20:27]
-      totalMoney <= 8'h0; // @[\\src\\main\\scala\\VendingMachine.scala 20:27]
-    end else if (fsm_io_signalCoin2) begin // @[\\src\\main\\scala\\VendingMachine.scala 139:28]
-      if (_T_21) begin // @[\\src\\main\\scala\\VendingMachine.scala 140:30]
-        totalMoney <= _totalMoney_T_1; // @[\\src\\main\\scala\\VendingMachine.scala 141:18]
+    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 29:27]
+      totalMoney <= 8'h0; // @[\\src\\main\\scala\\VendingMachine.scala 29:27]
+    end else if (fsm_io_signalCoin2) begin // @[\\src\\main\\scala\\VendingMachine.scala 148:28]
+      if (_T_21) begin // @[\\src\\main\\scala\\VendingMachine.scala 149:30]
+        totalMoney <= _totalMoney_T_1; // @[\\src\\main\\scala\\VendingMachine.scala 150:18]
       end
-    end else if (fsm_io_signalCoin5) begin // @[\\src\\main\\scala\\VendingMachine.scala 145:35]
-      if (_T_23) begin // @[\\src\\main\\scala\\VendingMachine.scala 146:30]
-        totalMoney <= _totalMoney_T_3; // @[\\src\\main\\scala\\VendingMachine.scala 147:18]
+    end else if (fsm_io_signalCoin5) begin // @[\\src\\main\\scala\\VendingMachine.scala 154:35]
+      if (_T_23) begin // @[\\src\\main\\scala\\VendingMachine.scala 155:30]
+        totalMoney <= _totalMoney_T_3; // @[\\src\\main\\scala\\VendingMachine.scala 156:18]
       end
-    end else if (fsm_io_signalSub) begin // @[\\src\\main\\scala\\VendingMachine.scala 151:33]
-      totalMoney <= _totalMoney_T_5; // @[\\src\\main\\scala\\VendingMachine.scala 152:16]
+    end else if (fsm_io_signalSub) begin // @[\\src\\main\\scala\\VendingMachine.scala 160:33]
+      totalMoney <= _totalMoney_T_5; // @[\\src\\main\\scala\\VendingMachine.scala 161:16]
     end
-    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 46:29]
-      blinkCounter <= 32'h0; // @[\\src\\main\\scala\\VendingMachine.scala 46:29]
-    end else if (blinkCounter == 32'h17d7840) begin // @[\\src\\main\\scala\\VendingMachine.scala 102:36]
-      blinkCounter <= 32'h0; // @[\\src\\main\\scala\\VendingMachine.scala 103:18]
+    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 55:29]
+      blinkCounter <= 32'h0; // @[\\src\\main\\scala\\VendingMachine.scala 55:29]
+    end else if (blinkCounter == 32'h17d7840) begin // @[\\src\\main\\scala\\VendingMachine.scala 111:36]
+      blinkCounter <= 32'h0; // @[\\src\\main\\scala\\VendingMachine.scala 112:18]
     end else begin
-      blinkCounter <= _blinkCounter_T_1; // @[\\src\\main\\scala\\VendingMachine.scala 101:16]
+      blinkCounter <= _blinkCounter_T_1; // @[\\src\\main\\scala\\VendingMachine.scala 110:16]
     end
-    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 47:25]
-      blinkReg <= 1'h0; // @[\\src\\main\\scala\\VendingMachine.scala 47:25]
-    end else if (blinkCounter == 32'h17d7840) begin // @[\\src\\main\\scala\\VendingMachine.scala 102:36]
-      blinkReg <= ~blinkReg; // @[\\src\\main\\scala\\VendingMachine.scala 104:14]
+    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 56:25]
+      blinkReg <= 1'h0; // @[\\src\\main\\scala\\VendingMachine.scala 56:25]
+    end else if (blinkCounter == 32'h17d7840) begin // @[\\src\\main\\scala\\VendingMachine.scala 111:36]
+      blinkReg <= ~blinkReg; // @[\\src\\main\\scala\\VendingMachine.scala 113:14]
     end
-    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 50:23]
-      cntReg <= 32'h0; // @[\\src\\main\\scala\\VendingMachine.scala 50:23]
-    end else if (cntReg == 32'h1869f) begin // @[\\src\\main\\scala\\VendingMachine.scala 157:27]
-      cntReg <= 32'h0; // @[\\src\\main\\scala\\VendingMachine.scala 158:12]
+    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 59:23]
+      cntReg <= 32'h0; // @[\\src\\main\\scala\\VendingMachine.scala 59:23]
+    end else if (cntReg == 32'h1869f) begin // @[\\src\\main\\scala\\VendingMachine.scala 166:27]
+      cntReg <= 32'h0; // @[\\src\\main\\scala\\VendingMachine.scala 167:12]
     end else begin
-      cntReg <= _cntReg_T_1; // @[\\src\\main\\scala\\VendingMachine.scala 156:10]
+      cntReg <= _cntReg_T_1; // @[\\src\\main\\scala\\VendingMachine.scala 165:10]
     end
-    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 51:23]
-      selReg <= 2'h0; // @[\\src\\main\\scala\\VendingMachine.scala 51:23]
-    end else if (cntReg == 32'h1869f) begin // @[\\src\\main\\scala\\VendingMachine.scala 157:27]
-      selReg <= _selReg_T_1; // @[\\src\\main\\scala\\VendingMachine.scala 159:12]
+    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 60:23]
+      selReg <= 2'h0; // @[\\src\\main\\scala\\VendingMachine.scala 60:23]
+    end else if (cntReg == 32'h1869f) begin // @[\\src\\main\\scala\\VendingMachine.scala 166:27]
+      selReg <= _selReg_T_1; // @[\\src\\main\\scala\\VendingMachine.scala 168:12]
     end
-    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 55:27]
-      coin2Count <= 6'h0; // @[\\src\\main\\scala\\VendingMachine.scala 55:27]
-    end else if (fsm_io_signalCoin2 & totalMoney <= 8'h61) begin // @[\\src\\main\\scala\\VendingMachine.scala 124:50]
-      coin2Count <= _coin2Count_T_1; // @[\\src\\main\\scala\\VendingMachine.scala 125:16]
+    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 64:27]
+      coin2Count <= 6'h0; // @[\\src\\main\\scala\\VendingMachine.scala 64:27]
+    end else if (fsm_io_signalCoin2 & totalMoney <= 8'h61) begin // @[\\src\\main\\scala\\VendingMachine.scala 133:50]
+      coin2Count <= _coin2Count_T_1; // @[\\src\\main\\scala\\VendingMachine.scala 134:16]
     end
-    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 56:27]
-      coin5Count <= 6'h0; // @[\\src\\main\\scala\\VendingMachine.scala 56:27]
-    end else if (fsm_io_signalCoin5 & totalMoney <= 8'h5e) begin // @[\\src\\main\\scala\\VendingMachine.scala 127:50]
-      coin5Count <= _coin5Count_T_1; // @[\\src\\main\\scala\\VendingMachine.scala 128:16]
+    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 65:27]
+      coin5Count <= 6'h0; // @[\\src\\main\\scala\\VendingMachine.scala 65:27]
+    end else if (fsm_io_signalCoin5 & totalMoney <= 8'h5e) begin // @[\\src\\main\\scala\\VendingMachine.scala 136:50]
+      coin5Count <= _coin5Count_T_1; // @[\\src\\main\\scala\\VendingMachine.scala 137:16]
     end
-    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 58:33]
-      fullDisplayCount <= 4'h0; // @[\\src\\main\\scala\\VendingMachine.scala 58:33]
-    end else if (blinkReg & ~REG_2 & showFull) begin // @[\\src\\main\\scala\\VendingMachine.scala 64:52]
-      fullDisplayCount <= _fullDisplayCount_T_1; // @[\\src\\main\\scala\\VendingMachine.scala 65:22]
-    end else if (_T_10 & coinFull | _T_13 & coinFull) begin // @[\\src\\main\\scala\\VendingMachine.scala 61:82]
-      fullDisplayCount <= 4'ha; // @[\\src\\main\\scala\\VendingMachine.scala 62:22]
+    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 67:33]
+      fullDisplayCount <= 4'h0; // @[\\src\\main\\scala\\VendingMachine.scala 67:33]
+    end else if (blinkReg & ~REG_2 & showFull) begin // @[\\src\\main\\scala\\VendingMachine.scala 73:52]
+      fullDisplayCount <= _fullDisplayCount_T_1; // @[\\src\\main\\scala\\VendingMachine.scala 74:22]
+    end else if (_T_10 & coinFull | _T_13 & coinFull) begin // @[\\src\\main\\scala\\VendingMachine.scala 70:82]
+      fullDisplayCount <= 4'ha; // @[\\src\\main\\scala\\VendingMachine.scala 71:22]
     end
-    REG <= io_coin2; // @[\\src\\main\\scala\\VendingMachine.scala 77:58]
-    REG_1 <= io_coin5; // @[\\src\\main\\scala\\VendingMachine.scala 77:58]
-    REG_2 <= blinkReg; // @[\\src\\main\\scala\\VendingMachine.scala 64:28]
-    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 70:25]
-      canCount <= 5'h14; // @[\\src\\main\\scala\\VendingMachine.scala 70:25]
-    end else if (buyFallingEdge & fsm_io_releaseCan & _coin2Edge_T_2) begin // @[\\src\\main\\scala\\VendingMachine.scala 131:58]
-      canCount <= _canCount_T_1; // @[\\src\\main\\scala\\VendingMachine.scala 132:14]
+    REG <= io_coin2; // @[\\src\\main\\scala\\VendingMachine.scala 86:58]
+    REG_1 <= io_coin5; // @[\\src\\main\\scala\\VendingMachine.scala 86:58]
+    REG_2 <= blinkReg; // @[\\src\\main\\scala\\VendingMachine.scala 73:28]
+    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 79:25]
+      canCount <= 5'h14; // @[\\src\\main\\scala\\VendingMachine.scala 79:25]
+    end else if (buyFallingEdge & fsm_io_releaseCan & _coin2Edge_T_2) begin // @[\\src\\main\\scala\\VendingMachine.scala 140:58]
+      canCount <= _canCount_T_1; // @[\\src\\main\\scala\\VendingMachine.scala 141:14]
     end
-    buyFallingEdge_REG <= io_buy; // @[\\src\\main\\scala\\VendingMachine.scala 72:42]
-    coin2Edge_REG <= io_coin2; // @[\\src\\main\\scala\\VendingMachine.scala 77:58]
-    coin5Edge_REG <= io_coin5; // @[\\src\\main\\scala\\VendingMachine.scala 77:58]
-    buyEdge_REG <= io_buy; // @[\\src\\main\\scala\\VendingMachine.scala 77:58]
-    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 89:30]
-      rejectCounter <= 32'h0; // @[\\src\\main\\scala\\VendingMachine.scala 89:30]
-    end else if (rejectCounter == 32'h5f5e10) begin // @[\\src\\main\\scala\\VendingMachine.scala 93:38]
-      rejectCounter <= 32'h0; // @[\\src\\main\\scala\\VendingMachine.scala 94:19]
+    buyFallingEdge_REG <= io_buy; // @[\\src\\main\\scala\\VendingMachine.scala 81:42]
+    coin2Edge_REG <= io_coin2; // @[\\src\\main\\scala\\VendingMachine.scala 86:58]
+    coin5Edge_REG <= io_coin5; // @[\\src\\main\\scala\\VendingMachine.scala 86:58]
+    buyEdge_REG <= io_buy; // @[\\src\\main\\scala\\VendingMachine.scala 86:58]
+    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 98:30]
+      rejectCounter <= 32'h0; // @[\\src\\main\\scala\\VendingMachine.scala 98:30]
+    end else if (rejectCounter == 32'h5f5e10) begin // @[\\src\\main\\scala\\VendingMachine.scala 102:38]
+      rejectCounter <= 32'h0; // @[\\src\\main\\scala\\VendingMachine.scala 103:19]
     end else begin
-      rejectCounter <= _rejectCounter_T_1; // @[\\src\\main\\scala\\VendingMachine.scala 92:17]
+      rejectCounter <= _rejectCounter_T_1; // @[\\src\\main\\scala\\VendingMachine.scala 101:17]
     end
-    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 90:26]
-      rejectReg <= 1'h0; // @[\\src\\main\\scala\\VendingMachine.scala 90:26]
-    end else if (rejectCounter == 32'h5f5e10) begin // @[\\src\\main\\scala\\VendingMachine.scala 93:38]
-      rejectReg <= ~rejectReg; // @[\\src\\main\\scala\\VendingMachine.scala 95:15]
+    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 99:26]
+      rejectReg <= 1'h0; // @[\\src\\main\\scala\\VendingMachine.scala 99:26]
+    end else if (rejectCounter == 32'h5f5e10) begin // @[\\src\\main\\scala\\VendingMachine.scala 102:38]
+      rejectReg <= ~rejectReg; // @[\\src\\main\\scala\\VendingMachine.scala 104:15]
     end
-    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 137:36]
-      fsm_io_inpCoinBeingRej_REG <= 1'h0; // @[\\src\\main\\scala\\VendingMachine.scala 137:36]
-    end else if (fsm_io_signalCoin2) begin // @[\\src\\main\\scala\\VendingMachine.scala 139:28]
-      if (_T_21) begin // @[\\src\\main\\scala\\VendingMachine.scala 140:30]
-        fsm_io_inpCoinBeingRej_REG <= 1'h0; // @[\\src\\main\\scala\\VendingMachine.scala 136:31]
+    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 146:36]
+      fsm_io_inpCoinBeingRej_REG <= 1'h0; // @[\\src\\main\\scala\\VendingMachine.scala 146:36]
+    end else if (fsm_io_signalCoin2) begin // @[\\src\\main\\scala\\VendingMachine.scala 148:28]
+      if (_T_21) begin // @[\\src\\main\\scala\\VendingMachine.scala 149:30]
+        fsm_io_inpCoinBeingRej_REG <= 1'h0; // @[\\src\\main\\scala\\VendingMachine.scala 145:31]
       end else begin
-        fsm_io_inpCoinBeingRej_REG <= 1'h1; // @[\\src\\main\\scala\\VendingMachine.scala 143:18]
+        fsm_io_inpCoinBeingRej_REG <= 1'h1; // @[\\src\\main\\scala\\VendingMachine.scala 152:18]
       end
     end else begin
       fsm_io_inpCoinBeingRej_REG <= _GEN_24;
     end
+    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 214:29]
+      wasReleasing <= 1'h0; // @[\\src\\main\\scala\\VendingMachine.scala 214:29]
+    end else if (buyFallingEdge) begin // @[\\src\\main\\scala\\VendingMachine.scala 216:27]
+      wasReleasing <= 1'h0; // @[\\src\\main\\scala\\VendingMachine.scala 216:42]
+    end else begin
+      wasReleasing <= _GEN_49;
+    end
+    if (reset) begin // @[\\src\\main\\scala\\VendingMachine.scala 218:28]
+      wasAlarming <= 1'h0; // @[\\src\\main\\scala\\VendingMachine.scala 218:28]
+    end else if (buyFallingEdge) begin // @[\\src\\main\\scala\\VendingMachine.scala 220:24]
+      wasAlarming <= 1'h0; // @[\\src\\main\\scala\\VendingMachine.scala 220:38]
+    end else begin
+      wasAlarming <= _GEN_51;
+    end
+    uart_io_empty_REG <= canCount == 5'h0; // @[\\src\\main\\scala\\VendingMachine.scala 80:27]
+    uart_io_full_REG <= fullDisplayCount > 4'h0; // @[\\src\\main\\scala\\VendingMachine.scala 68:35]
   end
 // Register and memory initialization
 `ifdef RANDOMIZE_GARBAGE_ASSIGN
@@ -469,6 +1001,14 @@ initial begin
   rejectReg = _RAND_17[0:0];
   _RAND_18 = {1{`RANDOM}};
   fsm_io_inpCoinBeingRej_REG = _RAND_18[0:0];
+  _RAND_19 = {1{`RANDOM}};
+  wasReleasing = _RAND_19[0:0];
+  _RAND_20 = {1{`RANDOM}};
+  wasAlarming = _RAND_20[0:0];
+  _RAND_21 = {1{`RANDOM}};
+  uart_io_empty_REG = _RAND_21[0:0];
+  _RAND_22 = {1{`RANDOM}};
+  uart_io_full_REG = _RAND_22[0:0];
 `endif // RANDOMIZE_REG_INIT
   `endif // RANDOMIZE
 end // initial

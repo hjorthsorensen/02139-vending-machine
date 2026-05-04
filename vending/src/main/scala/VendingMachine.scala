@@ -1,5 +1,6 @@
 import chisel3._
 import chisel3.util._
+import uart._
 
 class VendingMachine(maxCount: Int) extends Module {
   val io = IO(new Bundle {
@@ -12,9 +13,17 @@ class VendingMachine(maxCount: Int) extends Module {
     val rejectCoinLED = Output(Bool())
     val seg = Output(UInt(7.W))
     val an = Output(UInt(4.W))
+    val txd = Output(UInt(1.W))
   })
 
   /////# DATAPATH LOGIC #/////
+
+
+
+    // Messages
+
+
+
 
   //  REGISTERS & LOGIC //
   val totalMoney = RegInit(0.U(8.W)) // 8 bits, 0 to 99
@@ -201,6 +210,21 @@ class VendingMachine(maxCount: Int) extends Module {
   }
 
 
+  // UART LOGIC //
+  val wasReleasing = RegInit(false.B)
+  when(buyFallingEdge)    { wasReleasing := false.B }
+  when(fsm.io.releaseCan) { wasReleasing := true.B }
+
+  val wasAlarming = RegInit(false.B)
+  when(fsm.io.alarm)   { wasAlarming := true.B }
+  when(buyFallingEdge) { wasAlarming := false.B }
+
+  val uart = Module(new UartDisplay(100000000, 115200))
+  uart.io.sold  := buyFallingEdge && wasReleasing
+  uart.io.alarm := buyFallingEdge && wasAlarming
+  uart.io.empty := risingEdge(canEmpty)
+  uart.io.full  := risingEdge(showFull)
+  io.txd := uart.io.txd
 
   /////# OUTPUT ASSIGNMENTS #/////
   io.seg := ~segOut      

@@ -12,6 +12,7 @@ Vendingbasic has the basic features of:
 The main project, \vending, has some different capabilities.
 Gør så penge ikke kan komme over 99, måske en LED som viser at penge bliver spyttet ud igen: FÆRDIG
 Maks 20 mønter samt 20 dåser: FÆRDIG
+Gør så når der er maks mønter i maskinen og man er færdig med at købe (Måske en finish button), så giver den dig dine penge tilbage
 
 IDEER:
 UART Menu
