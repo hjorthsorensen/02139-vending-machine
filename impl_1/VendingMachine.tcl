@@ -1,5 +1,5 @@
 namespace eval ::optrace {
-  variable script "C:/Users/mikke/OneDrive/Desktop/DTU/02139 Digital Electronics 2/vendingmachineproject/vendingmachine/vendingmachine.runs/impl_1/VendingMachine.tcl"
+  variable script "C:/vendingmachineproject/VendingMachineProject.runs/impl_1/VendingMachine.tcl"
   variable category "vivado_impl"
 }
 
@@ -97,7 +97,6 @@ proc step_failed { step } {
 OPTRACE "impl_1" END { }
 }
 
-set_msg_config -id {Common 17-41} -limit 10000000
 
 OPTRACE "impl_1" START { ROLLUP_1 }
 OPTRACE "Phase: Init Design" START { ROLLUP_AUTO }
@@ -117,15 +116,15 @@ OPTRACE "create in-memory project" START { }
   set_param project.singleFileAddWarning.threshold 0
 OPTRACE "create in-memory project" END { }
 OPTRACE "set parameters" START { }
-  set_property webtalk.parent_dir {C:/Users/mikke/OneDrive/Desktop/DTU/02139 Digital Electronics 2/vendingmachineproject/vendingmachine/vendingmachine.cache/wt} [current_project]
-  set_property parent.project_path {C:/Users/mikke/OneDrive/Desktop/DTU/02139 Digital Electronics 2/vendingmachineproject/vendingmachine/vendingmachine.xpr} [current_project]
-  set_property ip_output_repo {{C:/Users/mikke/OneDrive/Desktop/DTU/02139 Digital Electronics 2/vendingmachineproject/vendingmachine/vendingmachine.cache/ip}} [current_project]
+  set_property webtalk.parent_dir C:/vendingmachineproject/VendingMachineProject.cache/wt [current_project]
+  set_property parent.project_path C:/vendingmachineproject/VendingMachineProject.xpr [current_project]
+  set_property ip_output_repo C:/vendingmachineproject/VendingMachineProject.cache/ip [current_project]
   set_property ip_cache_permissions {read write} [current_project]
 OPTRACE "set parameters" END { }
 OPTRACE "add files" START { }
-  add_files -quiet {{C:/Users/mikke/OneDrive/Desktop/DTU/02139 Digital Electronics 2/vendingmachineproject/vendingmachine/vendingmachine.runs/synth_1/VendingMachine.dcp}}
+  add_files -quiet C:/vendingmachineproject/VendingMachineProject.runs/synth_1/VendingMachine.dcp
 OPTRACE "read constraints: implementation" START { }
-  read_xdc {{C:/Users/mikke/OneDrive/Desktop/DTU/02139 Digital Electronics 2/vendingmachineproject/02139-vending-machine/vending/vending.xdc}}
+  read_xdc C:/vendingmachineproject/02139-vending-machine/vending/vending.xdc
 OPTRACE "read constraints: implementation" END { }
 OPTRACE "read constraints: implementation_pre" START { }
 OPTRACE "read constraints: implementation_pre" END { }

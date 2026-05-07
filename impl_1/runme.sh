@@ -25,7 +25,7 @@ else
 fi
 export LD_LIBRARY_PATH
 
-HD_PWD='C:/Users/mikke/OneDrive/Desktop/DTU/02139 Digital Electronics 2/vendingmachineproject/vendingmachine/vendingmachine.runs/impl_1'
+HD_PWD='C:/vendingmachineproject/VendingMachineProject.runs/impl_1'
 cd "$HD_PWD"
 
 HD_LOG=runme.log
