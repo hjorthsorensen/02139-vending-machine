@@ -218,11 +218,9 @@ class VendingMachine(maxCount: Int) extends Module {
 
   val uart = Module(new UartDisplay(100000000, 115200))
 
-  // Connect triggers directly to FSM wires to see current status immediately
   uart.io.sold    := buyFallingEdge && fsm.io.releaseCan && !canEmpty
   uart.io.alarm   := buyFallingEdge && fsm.io.alarm
   
-  // These use risingEdge to ensure the message only prints once per event
   uart.io.empty   := risingEdge(canEmpty)
   uart.io.full    := risingEdge(showFull)
   uart.io.rtnCoin := risingEdge(fsm.io.coinBeingRejected)
