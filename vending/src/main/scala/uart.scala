@@ -12,6 +12,9 @@ package uart
 import chisel3._
 import chisel3.util._
 
+// UART IS WRITTEN BY MARTNI SCHOEBERL. ONLY PART REWRITTEN IS GOING FROM 2 STOP BITS TO 1 STOP BIT.
+
+
 //- start uart_channel
 class UartIO extends DecoupledIO(UInt(8.W)) {
 }

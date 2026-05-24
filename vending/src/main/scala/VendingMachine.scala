@@ -4,10 +4,14 @@ import uart._
 
 class VendingMachine(maxCount: Int) extends Module {
   val io = IO(new Bundle {
+
+    // Inputs
     val price = Input(UInt(5.W))
     val coin2 = Input(Bool())
     val coin5 = Input(Bool())
     val buy = Input(Bool())
+
+    // Outputs
     val releaseCan = Output(Bool())
     val alarm = Output(Bool())
     val rejectCoinLED = Output(Bool())
@@ -21,12 +25,6 @@ class VendingMachine(maxCount: Int) extends Module {
   })
 
   /////# DATAPATH LOGIC #/////
-
-
-
-    // Messages
-
-
 
 
   //  REGISTERS & LOGIC //
@@ -49,7 +47,7 @@ class VendingMachine(maxCount: Int) extends Module {
     is(8.U) { itemPrice := 10.U } // Red Bull (sale)
     is(9.U) { itemPrice := 17.U } // Booster
   }
-
+  // For display purposes only, we need to break the price into digits as well
   val priceOnes = itemPrice % 10.U
   val priceTens = (itemPrice / 10.U) % 10.U
 
@@ -69,8 +67,9 @@ class VendingMachine(maxCount: Int) extends Module {
   val coin5Count = RegInit(0.U(6.W))
   val coinFull = coin2Count >= 63.U || coin5Count >= 63.U
   val fullDisplayCount = RegInit(0.U(4.W))
-  val showFull = fullDisplayCount > 0.U
+  val showFull = fullDisplayCount > 0.U // used for displaying 'FULL' when coins are full
 
+  // Display 'FULL' for a short time when coins are full
   when((risingEdge(io.coin2) && coinFull) || (risingEdge(io.coin5) && coinFull)) {
     fullDisplayCount := 10.U
   }
@@ -86,7 +85,6 @@ class VendingMachine(maxCount: Int) extends Module {
 
 
   // EDGE DETECTORS //
-  // guds gave )))
   def risingEdge(signal: Bool): Bool = signal && !RegNext(signal)
   val coin2Edge = risingEdge(io.coin2) && !canEmpty && !coinFull
   val coin5Edge = risingEdge(io.coin5) && !canEmpty && !coinFull
