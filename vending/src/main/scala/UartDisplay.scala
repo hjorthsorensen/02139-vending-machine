@@ -39,17 +39,11 @@ class UartDisplay(frequency: Int, baudRate: Int) extends Module {
     val cntReg     = RegInit(0.U(8.W))
     val sendingReg = RegInit(false.B)
 
-    val soldEdge  = io.sold  && !RegNext(io.sold)
-    val alarmEdge = io.alarm && !RegNext(io.alarm)
-    val emptyEdge = io.empty && !RegNext(io.empty)
-    val fullEdge  = io.full  && !RegNext(io.full)
-    val rtnCoinEdge = io.rtnCoin && !RegNext(io.rtnCoin)
-
-    when(soldEdge) { msgSel := 0.U ; cntReg := 0.U ; sendingReg := true.B }
-    .elsewhen(alarmEdge) { msgSel := 1.U ; cntReg := 0.U ; sendingReg := true.B }
-    .elsewhen(emptyEdge) { msgSel := 2.U ; cntReg := 0.U ; sendingReg := true.B }
-    .elsewhen(fullEdge)  { msgSel := 3.U ; cntReg := 0.U ; sendingReg := true.B }
-    .elsewhen(rtnCoinEdge) { msgSel := 4.U ; cntReg := 0.U ; sendingReg := true.B }
+    when(io.sold) { msgSel := 0.U ; cntReg := 0.U ; sendingReg := true.B }
+    .elsewhen(io.alarm) { msgSel := 1.U ; cntReg := 0.U ; sendingReg := true.B }
+    .elsewhen(io.empty) { msgSel := 2.U ; cntReg := 0.U ; sendingReg := true.B }
+    .elsewhen(io.full)  { msgSel := 3.U ; cntReg := 0.U ; sendingReg := true.B }
+    .elsewhen(io.rtnCoin) { msgSel := 4.U ; cntReg := 0.U ; sendingReg := true.B }
 
     tx.io.channel.bits  := messages((msgSel * msgLen.U) + cntReg)
     tx.io.channel.valid := sendingReg

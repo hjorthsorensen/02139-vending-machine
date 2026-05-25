@@ -26,12 +26,5 @@
     "sources":[
       "~VendingMachine|VendingMachine>io_price"
     ]
-  },
-  {
-    "class":"firrtl.transforms.CombinationalPath",
-    "sink":"~VendingMachine|VendingMachine>io_sold",
-    "sources":[
-      "~VendingMachine|VendingMachine>io_buy"
-    ]
   }
 ]

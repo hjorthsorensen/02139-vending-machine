@@ -18,10 +18,6 @@ class VendingMachine(maxCount: Int) extends Module {
     val seg = Output(UInt(7.W))
     val an = Output(UInt(4.W))
     val txd = Output(UInt(1.W))
-    val sold = Output(Bool())
-    val empty = Output(Bool())
-    val full = Output(Bool())
-    val rtnCoin = Output(Bool())
   })
 
   /////# DATAPATH LOGIC #/////
@@ -116,54 +112,34 @@ class VendingMachine(maxCount: Int) extends Module {
   }
 
 
- /////# FSM LOGIC #/////
-
+  /////# FSM LOGIC #/////
   val fsm = Module(new VendingFSM())
-  fsm.io.coin2Edge := coin2Edge
-  fsm.io.coin5Edge := coin5Edge
-  fsm.io.buyEdge   := buyEdge
-  fsm.io.buy       := io.buy
-  fsm.io.coin2     := io.coin2
-  fsm.io.coin5     := io.coin5
+  fsm.io.coin2Edge  := coin2Edge
+  fsm.io.coin5Edge  := coin5Edge
+  fsm.io.buyEdge    := buyEdge
+  fsm.io.buy        := io.buy
+  fsm.io.coin2      := io.coin2
+  fsm.io.coin5      := io.coin5
   fsm.io.totalMoney := totalMoney
-  fsm.io.itemPrice := itemPrice
+  fsm.io.itemPrice  := itemPrice
 
- 
-  
-
-  // MONEY UPDATE LOGIC //
-  when(fsm.io.signalCoin2 && totalMoney <= 97.U) {
+  // MONEY & INVENTORY UPDATE LOGIC //
+  // Safely update calculations directly upon FSM authorization flags
+  when(fsm.io.signalCoin2) {
     coin2Count := coin2Count + 1.U
-  }
-  when(fsm.io.signalCoin5 && totalMoney <= 94.U) {
+    totalMoney := totalMoney + 2.U
+  }.elsewhen(fsm.io.signalCoin5) {
     coin5Count := coin5Count + 1.U
+    totalMoney := totalMoney + 5.U
+  }.elsewhen(fsm.io.signalSub) {
+    totalMoney := totalMoney - itemPrice
   }
 
   when(buyFallingEdge && fsm.io.releaseCan && !canEmpty) {
     canCount := canCount - 1.U
   }
 
-
-  val rejectNext = WireDefault(false.B)
-  fsm.io.inpCoinBeingRej := RegNext(rejectNext, false.B)
-
-  when(fsm.io.signalCoin2) {
-    when(totalMoney <= 97.U) { 
-      totalMoney := totalMoney + 2.U
-    } .otherwise {
-      rejectNext := true.B
-    }
-  } .elsewhen(fsm.io.signalCoin5) {
-    when(totalMoney <= 94.U) { 
-      totalMoney := totalMoney + 5.U
-    } .otherwise {
-      rejectNext := true.B
-    }
-  } .elsewhen(fsm.io.signalSub) {
-    totalMoney := totalMoney - itemPrice
-  }
-
-  // SEVEN SEGMENT DISPLAY LOGIC //
+  // SEVEN SEGMENT DISPLAY MULTIPLEXER LOGIC //
   cntReg := cntReg + 1.U
   when(cntReg === cntMAX) {
     cntReg := 0.U
@@ -231,10 +207,6 @@ class VendingMachine(maxCount: Int) extends Module {
   io.releaseCan := fsm.io.releaseCan && !canEmpty
   io.alarm := fsm.io.alarm && blinkReg
   io.rejectCoinLED := (fsm.io.coinBeingRejected || showFull) && rejectReg
-  io.sold := uart.io.sold
-  io.empty := uart.io.empty
-  io.full := uart.io.full
-  io.rtnCoin := uart.io.rtnCoin
 
 }
 

@@ -12,7 +12,6 @@ class VendingFSM extends Module {
     val coin5        = Input(Bool())
     val totalMoney   = Input(UInt(8.W))
     val itemPrice    = Input(UInt(8.W))
-    val inpCoinBeingRej = Input(Bool())
   
 
     // Outputs
@@ -34,14 +33,25 @@ class VendingFSM extends Module {
   io.coinBeingRejected := false.B
   
 
-  switch(stateReg) {
+switch(stateReg) {
     is(idle) {
+      // Handle 2-Krone insertions with an instantaneous look-ahead safeguard
       when(io.coin2Edge) {
-        io.signalCoin2 := true.B
+        when(io.totalMoney <= 97.U) {
+          io.signalCoin2 := true.B
+        }.otherwise {
+          stateReg := rejectCoin
+        }
+      // Handle 5-Krone insertions with an instantaneous look-ahead safeguard
       }.elsewhen(io.coin5Edge) {
-        io.signalCoin5 := true.B
+        when(io.totalMoney <= 94.U) {
+          io.signalCoin5 := true.B
+        }.otherwise {
+          stateReg := rejectCoin
+        }
       }
 
+      // Handle buy attempts
       when(io.buyEdge) {
         when(io.totalMoney >= io.itemPrice) {
           io.signalSub := true.B
@@ -50,10 +60,6 @@ class VendingFSM extends Module {
           stateReg := alarmState
         }
       }
-      
-      when(io.inpCoinBeingRej) {
-        stateReg := rejectCoin
-      }
     }
     
     is(busy) {
@@ -61,19 +67,22 @@ class VendingFSM extends Module {
     }
     
     is(rejectCoin) {
+      // Stay in rejection mode until the physical coin insertion button is released
       when(!io.coin2 && !io.coin5) {
         stateReg := idle
       }
     }
+
     is(alarmState) {
+      // Stay in alarm mode until the physical buy button is released
       when(!io.buy && !io.coin2 && !io.coin5) {
         stateReg := idle
       }
     }
   }
 
-  // State-based Outputs
-  io.releaseCan := (stateReg === busy)
-  io.alarm      := (stateReg === alarmState)
+  // State-based Assignment Outputs
+  io.releaseCan        := (stateReg === busy)
+  io.alarm             := (stateReg === alarmState)
   io.coinBeingRejected := (stateReg === rejectCoin)
 }
