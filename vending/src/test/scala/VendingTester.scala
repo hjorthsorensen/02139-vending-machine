@@ -53,7 +53,7 @@ class VendingTester extends AnyFlatSpec with ChiselScalatestTester {
     buyItem(0) //Buying item no 0: Water, Total = 1
     println("VERIFIED TEST 2: Buying item and insufficient coins")
 
-    //TEST 3: Holding the buy button
+    //TEST 3: Holding the buy button (Edge detection)
     println("Testing holding the buy button...")
     pressButton(dut.io.coin5)
     pressButton(dut.io.coin5) //Total = 11

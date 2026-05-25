@@ -6,7 +6,7 @@ class VendingMachine(maxCount: Int) extends Module {
   val io = IO(new Bundle {
 
     // Inputs
-    val price = Input(UInt(5.W))
+    val price = Input(UInt(4.W))
     val coin2 = Input(Bool())
     val coin5 = Input(Bool())
     val buy = Input(Bool())
@@ -33,15 +33,22 @@ class VendingMachine(maxCount: Int) extends Module {
   val itemPrice = Wire(UInt(8.W))
   itemPrice := 0.U
   switch(io.price) {
+    is(0.U) { itemPrice := 2.U } // Water bottle
     is(1.U) { itemPrice := 4.U } // Coca-Cola Can (Sale)
     is(2.U) { itemPrice := 4.U } // Faxe Kondi Can (Sale) 
     is(3.U) { itemPrice := 7.U } // Pepsi Can
     is(4.U) { itemPrice := 17.U } // Coca-Cola Bottle
     is(5.U) { itemPrice := 18.U } // Faxe Kondi Bottle
     is(6.U) { itemPrice := 20.U } // Pepsi Bottle
-    is(7.U) { itemPrice := 14.U } // Monster Energi (sale)
+    is(7.U) { itemPrice := 11.U } // Monster Energi (sale)
     is(8.U) { itemPrice := 10.U } // Red Bull (sale)
     is(9.U) { itemPrice := 17.U } // Booster
+    is(10.U) { itemPrice := 8.U } // Heineken Beer (Small)
+    is(11.U) { itemPrice := 7.U } // Carlsberg Beer (Small)
+    is(12.U) { itemPrice := 8.U } // Tuborg classic Beer (Small)
+    is(13.U) { itemPrice := 17.U } // Heineken Beer (Large)
+    is(14.U) { itemPrice := 14.U } // Carlsberg Beer (Large)
+    is(15.U) { itemPrice := 16.U } // Tuborg classic Beer (Large)
   }
   // For display purposes only, we need to break the price into digits as well
   val priceOnes = itemPrice % 10.U
@@ -51,7 +58,7 @@ class VendingMachine(maxCount: Int) extends Module {
   // Timing Registers //
   val blinkFreq = 25000000.U
   val blinkCounter = RegInit(0.U(32.W))
-  val blinkReg = RegInit(false.B)
+  val blinkReg = RegInit(true.B)
 
   val cntMAX = (100000000 / 1000 - 1).U
   val cntReg = RegInit(0.U(32.W))
@@ -61,7 +68,8 @@ class VendingMachine(maxCount: Int) extends Module {
 
   val coin2Count = RegInit(0.U(6.W))
   val coin5Count = RegInit(0.U(6.W))
-  val coinFull = coin2Count >= 63.U || coin5Count >= 63.U
+  val totalCoins = coin2Count +& coin5Count
+  val coinFull = totalCoins >= 63.U
   val fullDisplayCount = RegInit(0.U(4.W))
   val showFull = fullDisplayCount > 0.U // used for displaying 'FULL' when coins are full
 
@@ -94,7 +102,7 @@ class VendingMachine(maxCount: Int) extends Module {
   // Alarm for coin rejection, just faster than blink so you can tell them apart
   val rejectFreq = 6250000.U 
   val rejectCounter = RegInit(0.U(32.W))
-  val rejectReg = RegInit(false.B)
+  val rejectReg = RegInit(true.B)
 
   rejectCounter := rejectCounter + 1.U
   when(rejectCounter === rejectFreq) {
