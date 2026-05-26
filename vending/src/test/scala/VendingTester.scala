@@ -7,7 +7,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 class VendingTester extends AnyFlatSpec with ChiselScalatestTester {
   "Vending machine test" should "pass" in {
     test(new VendingMachine(20)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
-      println("We are generting a VCD file with the test of the vending machine")
+      println("\nWe are generting a VCD file with the test of the vending machine")
      
      // Function to simulate pressing a button //
       def pressButton(button: Bool): Unit = {
@@ -28,7 +28,7 @@ class VendingTester extends AnyFlatSpec with ChiselScalatestTester {
         
       }
     
-    dut.clock.setTimeout(0)//No timeout
+    
     
     //TEST 1: Test all possible Inputs for price of items. For waveform
     for(i <- 0 to 15) {
@@ -39,19 +39,44 @@ class VendingTester extends AnyFlatSpec with ChiselScalatestTester {
     dut.io.releaseCan.expect(false.B)
     dut.io.alarm.expect(false.B)
     dut.io.rejectCoinLED.expect(false.B)
-    println("VERIFIED TEST 1: Generated 16 items for waveform and tested default alarm signals")
+    println("VERIFIED TEST 1: Generated 16 items for waveform and tested default alarm signals\n\n")
     
 
     //TEST 2: Insert 10 coins And buying item twice
     println("Inserting coins...")
     pressButton(dut.io.coin5) // Total = 5
     pressButton(dut.io.coin5) // Total = 10
-    buyItem(3) //Buying item no 3: PepsiCan
-    println("\nShould have insuffecient funds for next purchase of pepsi")
-    buyItem(3) //Buying item no 3: PepsiCan Total = 3
-    println("\nBuying a water bottle")
-    buyItem(0) //Buying item no 0: Water, Total = 1
-    println("VERIFIED TEST 2: Buying item and insufficient coins")
+
+    //Buying item no 3: PepsiCan, price = 7
+    dut.io.price.poke(3.U)
+    dut.io.buy.poke(true.B)
+    dut.clock.step(1)
+    dut.io.releaseCan.expect(true.B)
+    dut.io.alarm.expect(false.B)
+    dut.io.buy.poke(false.B)
+    dut.clock.step(1)
+    
+
+    println("Succesfully bought pepsi, should have insuffecient funds for next purchase of pepsi")
+    //Buying item no 3: PepsiCan Total = 3, expect alarm raised
+    dut.io.price.poke(3.U)
+    dut.io.buy.poke(true.B)
+    dut.clock.step(1)
+    dut.io.releaseCan.expect(false.B)
+    dut.io.alarm.expect(true.B)
+    dut.io.buy.poke(false.B)
+    dut.clock.step(1)
+    
+    println("Buying a water bottle")
+    //Buying item no 0: Water, Total = 1
+    dut.io.price.poke(0.U)
+    dut.io.buy.poke(true.B)
+    dut.clock.step(1)
+    dut.io.releaseCan.expect(true.B)
+    dut.io.alarm.expect(false.B)
+    dut.io.buy.poke(false.B)
+    dut.clock.step(1)
+    println("VERIFIED TEST 2: Buying item and insufficient coins\n\n")
 
     //TEST 3: Holding the buy button (Edge detection)
     println("Testing holding the buy button...")
@@ -68,7 +93,7 @@ class VendingTester extends AnyFlatSpec with ChiselScalatestTester {
     dut.clock.step(1)
     dut.io.releaseCan.expect(false.B)
     dut.io.alarm.expect(false.B)
-    println("VERIFIED TEST 3: Holding button doesnt fail the program")
+    println("VERIFIED TEST 3: Holding button doesnt fail the program\n\n")
 
     //TEST 4: max limit amount:
     for(i <- 1 to 45) { //Total = 99coins
@@ -128,7 +153,7 @@ class VendingTester extends AnyFlatSpec with ChiselScalatestTester {
     dut.io.buy.poke(false.B)
     dut.clock.step(1)
     println("VERIFIED TEST 6: empty Vending machine!")
-
+    println("All test Verified, Vending Machine verified!")
     }
   }
 }
