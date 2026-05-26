@@ -35,14 +35,13 @@ class VendingFSM extends Module {
 
 switch(stateReg) {
     is(idle) {
-      // Handle 2-Krone insertions with an instantaneous look-ahead safeguard
+      // Handle coin insertions
       when(io.coin2Edge) {
         when(io.totalMoney <= 97.U) {
           io.signalCoin2 := true.B
         }.otherwise {
           stateReg := rejectCoin
         }
-      // Handle 5-Krone insertions with an instantaneous look-ahead safeguard
       }.elsewhen(io.coin5Edge) {
         when(io.totalMoney <= 94.U) {
           io.signalCoin5 := true.B
@@ -63,7 +62,7 @@ switch(stateReg) {
     }
     
     is(busy) {
-      stateReg := Mux(io.buy, busy, idle)
+      stateReg := Mux(io.buy, busy, idle) // Stay busy until buy button is released
     }
     
     is(rejectCoin) {

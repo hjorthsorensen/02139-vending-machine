@@ -22,7 +22,6 @@ class VendingMachine(maxCount: Int) extends Module {
 
   /////# DATAPATH LOGIC #/////
 
-
   //  REGISTERS & LOGIC //
   val totalMoney = RegInit(0.U(8.W)) // 8 bits, 0 to 99
   val onesDigit = totalMoney % 10.U // right digit
