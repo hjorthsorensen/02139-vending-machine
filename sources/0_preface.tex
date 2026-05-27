@@ -1,0 +1,21 @@
+The following list is a list of implementations and contributions, if we both worked on something, we gave an approximate split along with a short description of which parts we each did.
+\begin{enumerate}
+    \item Basic Vending machine: Christian: 50\% / Mikkel: 50\% \\
+    Both designed the basic Vending Maching together.
+    \item FSM logic: Christian 80\% / Mikkel 20\% \\
+    Christian did the basic logic for state switching, along with Mikkel.
+    \item Datapath coin update on fsm authorization: Christian 80\% / Mikkel 20\%\\
+    Christian did the basic coin and money update on the fsm authorization.
+    \item 4-digit display logic: Christian 40\% / Mikkel 60\%\\
+    Mikkel implemented the basic design and Christian updated to blink and show messages, along with alarm connection to the display. Mikkel connected "FULL" and "EPty" messages.
+    \item Edge Detection: Christian 100\% / Mikkel 0\%
+    \item Price Decoding: Christian 0\% / Mikkel 100\%
+    \item Alarm and releaseCoinLED logic: Christian 20\% / Mikkel 80\%\\
+    Mikkel made the alarm system and the releaseCoinLED logic, Christian connected the alarm to 4-digit-display and to the fsm.
+    \item Inventory system (Coins and Cans): Christian 20\% / Mikkel 80\%\\
+    Mikkel did the creation of the inventory system and logic behind it. Christian did connections between the limits and fsm.
+    \item UART: Christian 20\% / Mikkel 80\%\\
+    Mikkel did the UART with inputs from Christian.
+    \item TestBench: Christian 80\% / Mikkel 20\%\\
+    Mikkel helped finding what to test for, Christian made the testbench, along with inputs from Mikkel.
+\end{enumerate}

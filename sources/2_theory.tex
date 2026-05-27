@@ -1,0 +1,134 @@
+As stated, the design of the vending machine controller follows a Finite State Machine with Datapath (FSMD) architecture. This means that the digital system has been split into two sections, each specializing on their own part.
+\begin{itemize}
+    \item \textbf{The Datapath:} Contains hardware registers, arithmetic units (adders, subtractors), edge detectors. It is the muscle of the system.
+    \item \textbf{The Control Path (FSM): } Implemented using a sequential state machine that changes based on edge-triggered signals and evaluates the financial states and sends information back to the datapath. This is the brain of the system.
+\end{itemize}
+The division is useful since it minimizes resource usage by only using what is actually necessary at a given point. It also handles error states efficiently and makes sure that nothing else happens before an error is resolved.
+An example could be that if the coin compartment is filled, you will not be allowed to put more coins in, but you may still use the ones you have as long as there are drinks left in the machine.
+
+\subsection{Overview of registers}
+\renewcommand{\arraystretch}{1.3}
+\begin{center}
+    \begin{tabular}{ |c|c|c|p{7.5cm}| }
+    \hline
+        Register & Type & Reset Value & Purpose \\ 
+        \hline \hline
+        totalMoney & UInt(8.W) & 0.U & Tracks the balance of the active user \\ 
+        \hline
+        coin2Count & UInt(6.W) & 0.U & Used to track how many 2 kr. there are \\ 
+        \hline
+        coin5Count & UInt(6.W) & 0.U & Used to track how many 5 kr. there are \\ 
+        \hline
+        canCount & UInt(5.W) & 20.U & Used to track how many cans there are \\
+        \hline
+        fullDisplayCount & UInt(4.W) & 0.U & Used for mapping dispaly when for FULL warning \\
+        \hline
+        rejectReg & Bool & true.B & Used for LED toggling to show coin rejection \\
+        \hline
+        rejectCounter & UInt(32.W) & 0.U & Used for LED blinking to show coin rejection \\
+        \hline
+        blinkReg & Bool & true.B & Used for LED toggling for alarm state \\
+        \hline
+        blinkCounter & UInt(32.W) & 0.U & Used for LED blinking to show alarm state \\
+        \hline
+        cntReg & UInt(32.W) & 0.U & Used for seven segment display operation \\
+        \hline
+        selReg & UInt(2.W) & 0.U & Used for switching which 7-segment anode is enabled \\
+    \hline
+    \end{tabular}
+\end{center}
+
+\subsection{Financial and Inventory Mathematics}
+The system uses the datapath to handle the financial and inventory aspects of the operations. Whenever a positive edge on a clock signal is given, the next state of totalMoney updates based on signals send by the control FSM:
+\begin{itemize}
+    \item \textbf{When} \texttt{fsm.io.signalCoin2} \textbf{is active:} \texttt{totalMoney} increments by 2~kr.
+    \item \textbf{When} \texttt{fsm.io.signalCoin5} \textbf{is active:} \texttt{totalMoney} increments by 5~kr.
+    \item \textbf{When} \texttt{fsm.io.signalSub} \textbf{is active:} \texttt{totalMoney} decrements by the current \texttt{itemPrice}.
+    \item \textbf{Under all other conditions:} \texttt{totalMoney} keeps its current value.
+\end{itemize}
+The inventory is handled simultaneously, and the coin vault registers are updated on the same clock edge.
+\begin{itemize}
+    \item \texttt{coin2Count} increments by 1 if \texttt{fsm.io.signalCoin2} is true.
+    \item \texttt{coin5Count} increments by 1 if \texttt{fsm.io.signalCoin5} is true.
+\end{itemize}
+The stock tracking of the inventory is handled in a specific manner to make sure double-subtraction doesn't occur, and it only decreases by 1 unit on a given clock cycle.
+\begin{itemize}
+    \item \texttt{canCount} decrements by 1 when \texttt{buyFallingEdge} is true, and \texttt{canEmpty} is false.
+\end{itemize}
+
+\subsection{Item Price Decoder}
+The item price is implemented using a lookup decoder that maps the 4 bit physical hardware switch \texttt{io.price} to and 8-bit price value \texttt{itemPrice}.
+\renewcommand{\arraystretch}{1.3}
+\begin{center}
+    \begin{tabular}{ |c|c|c| }
+    \hline
+        Switch Value & itemPrice & Sold Item \\ 
+        \hline \hline
+        0 & 2 kr. & Water Bottle \\
+        \hline
+        1 or 2 & 4 kr. & Coca-Cola or Faxe Kondi Can (sale) \\
+        \hline
+        3 or 11 & 7 kr. & Pepsi Can or Carlsberg Beer (Small) \\
+        \hline
+        4 or 9 or 13 & 17 kr. & Coca-Cola Bottle or Booster Energy or Heineken Beer (Large) \\
+        \hline
+        5 & 18 kr. & Faxe Kondi Bottle \\
+        \hline
+        6 & 20 kr. & Pepsi Bottle \\
+        \hline
+        7 & 11 kr. & Monster Energy (sale) \\
+        \hline
+        8 & 10 kr. & Red Bull (sale) \\
+        \hline
+        10 or 12 & 8 kr. & Heineken Beer (Small) or Tuborg Classic Beer (small) \\
+        \hline
+        14 & 14 kr. & Carlsberg Beer (Large) \\
+        \hline
+        15 & 16 kr. & Tuborg Classic Beer (Large) \\
+        \hline
+        \multicolumn{3}{|p{11cm}|}{\textbf{All other switch combinations: \texttt{itemPrice} will be 0 kr.}} \\
+    \hline
+    \end{tabular}
+\end{center}
+This will be used for the seven-segment display rendering, where we change the 8-bit binary value into a base-10 value to be used to dispaly.
+\begin{itemize}
+    \item \texttt{priceOnes = itemPrice} \% 10
+    \item \texttt{priceTens = (itemPrice} / 10) \% 10
+\end{itemize}
+
+\subsection{Inputs and Edge-Detection}
+The system must implement edge-detection, since a button will be held down for millions of clock cycles. In order for this to work, we implement a rising edge detector that checks if the current input is high while the previous clock cycle was low. This isolates a long human button press down to a single clock cycle, ensuring the machine only registers one action per press and preventing continuous mathematical overflows.
+
+\begin{itemize}
+    \item \texttt{risingEdge = currentInput} AND (NOT \texttt{previousInput})
+\end{itemize}
+We used this function (we defined it) to make the edges for our coin2, coin5, and buy inputs.
+
+\begin{itemize}
+    \item \texttt{coin2Edge = risingEdge(io.coin2)} AND (NOT \texttt{canEmpty}) AND (NOT \texttt{coinFull})
+    \item \texttt{coin5Edge = risingEdge(io.coin5)} AND (NOT \texttt{canEmpty}) AND (NOT \texttt{coinFull})
+    \item \texttt{buyEdge = risingEdge(io.buy)} AND (NOT \texttt{canEmpty})
+\end{itemize}
+
+\subsection{Control Path Architecture}
+The controller is governed entirely by the VendingFSM module (see \hyperref[sec:app_fsm]{Appendix B}
+The FSM has 4 states: 
+\begin{itemize}
+    \item \texttt{idle:} The primary state. It checks for input edges and sends signals to the datapath about updates to the registers, and sends the system to the next state.
+    \item \texttt{busy:} The busy state is used to make sure the LED stays on when the buy button is held, otherwise it goes back to idle. The state is reached by having enough money and trying to buy something. A signal is sent to UART upon a succesfull purchase.
+    \item \texttt{rejectCoin:} This state is used as a overflow safety. If a coin is being inserted that will take the value of all coins to 99, machine will stop it and flash an LED and send a signal to UART.
+    \item \texttt{alarmState:} This state is achieved when a user tries to buy something, but they don't have the money for it. It will flash an LED as well as the seven-segment display, and also send a message to the UART while the buy button is held.
+\end{itemize}
+
+\subsection{Seven-Segment Display Overrides}
+\label{SevenSeg}
+The seven-segment display will show the value of the items using the logic that was previously shown for the price of the item. The total money handled the same way.
+\begin{itemize}
+    \item \texttt{onesDigit = totalMoney} \% 10
+    \item \texttt{tensDigit = (totalMoney} / 10) \% 10
+\end{itemize}
+The seven-segment display can be overwritten in 2 different ways. The first way is during the alarm state of the FSM, a 2:1 Multiplexer is used to set the anode to be off completely, otherwise it will show the actual number. This makes it blink since this is only achieved whenever the blinkReg register blinks, and therefore all the numbers are as they should, then off, then back, meaning they blink. 
+The other time it will be overwritten is when there are no more cans in the machine, or the coin compartment is full. When a variable canEmpty is true, then the screen when show "EPty". If a variable showFull is true, it will show "FULL". canEmpty runs on a register going down whenever a can is bought, and showFull activates whenever 63 coins in total have been put into the machine after a reset.
+
+\subsection{UART Diagnostic System}
+The UART system works by using the UartDisplay module (see \hyperref[sec:app_uartdisplay]{Appendix E}). It sends messages whenever a handshake protocol is met, and something occurs. An example would be if an item is sold, meaning the user has enough money and buys something, 'Item Sold!' will be send to the terminal. We want all the messages to look easily readable in the terminal, so padding is added and a new line is made whenever a message is sent.

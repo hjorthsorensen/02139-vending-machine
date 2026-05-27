@@ -1,0 +1,16 @@
+
+
+Modern digital systems often rely on having the control flow and the mathematical execution of a system separated. This architecture is called a Finite State Machine with Datapath (FSMD). An FSMD divides the hardware into specialized registers that do the heavy mathematical work (the datapath), which is then controlled by the sequential control logic (the FSM). 
+In our project we have worked with this design structure and made a coin-and-button operated vending machine based on this.
+This report will document how the design, hardware implementation and verification using tests operated on a complex vending machine controller. The project is written in Chisel, and is primarily to be used for synthesis on a Xilinx Basys 3 FPGA board, which will manage the asynchronous user inputs, the mathematical operations and sequence state transitions.
+The main aspect of the problem is handling and tracking user input currencies (2 kr. and 5 kr.) and matching the balance to what the user is trying to do. The information displayed by the controller is put on a seven-segment display, and confirmation of the users actions will be sent to a terminal using UART.\\
+More specifically, this project includes:
+\begin{itemize}
+    \item Input of currencies (2. kr and 5kr.)
+    \item Buying of items (if possible)
+    \item Seven-segment display showing price and error messages
+    \item Handling of overstocking machines coin and can compartments
+    \item LED's to display errors or incoming rejected coins
+    \item UART to display Vending Machine operations to technicians
+\end{itemize}
+The following sections of this report will show the state behaviors, the block diagram, the actual code and test bench. 

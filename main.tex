@@ -1,0 +1,114 @@
+\input{Setup/packages}
+\input{Setup/page_settings}
+
+\begin{document}
+
+% ---------------- Frontpage ----------------
+\pagenumbering{gobble} % hide page numbers
+
+\input{sources/0_frontpage.tex}
+\section*{Abstract} \label{sec:abstract}
+\input{sources/0_abstract}
+\newpage
+\section*{Preface} \label{sec:preface}
+\input{sources/0_preface}
+\newpage
+
+\tableofcontents
+\newpage
+
+% ---------------- Start numbering here ----------------
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+% ---------------- Sections ----------------
+
+\section{Introduction} \label{sec:intro}
+\input{sources/1_introduction}
+
+\section{Analysis and Design} \label{sec:design}
+\input{sources/2_theory}
+
+\newpage
+\section{Implementation} \label{sec:impl}
+\input{sources/3_implementation}
+
+
+\section{Tests and Results} \label{sec:tests}
+\input{sources/4_tests}
+
+\newpage
+\section{Discussion} \label{sec:disc}
+\input{sources/5_discussion}
+
+
+\section{Experiences using AI Tools} \label{sec:aitools}
+\input{sources/6_aitools}
+
+\newpage
+\section{Conclusion} \label{sec:con}
+\input{sources/7_conclusion}
+
+% ---------------- References ----------------
+
+\newpage
+\bibliographystyle{ieeetr}
+\bibliography{document.bib}
+
+% ---------------- Appendices ----------------
+
+\newpage
+\appendix
+\pagenumbering{Roman}
+\setcounter{page}{1}
+
+\phantomsection
+\label{sec:app_vending}
+\section*{Appendix A0: VendingMachine.scala} 
+\addcontentsline{toc}{section}{Appendix A0: VendingMachine.scala}
+\input{sources/appendixA0}
+
+\newpage
+\phantomsection
+\label{sec:app_fsm}
+\section*{Appendix A1: VendingFSM.scala}
+\addcontentsline{toc}{section}{Appendix A1: VendingFSM.scala}
+\input{sources/appendixA1}
+
+\newpage
+\phantomsection
+\label{sec:app_sevenseg}
+\section*{Appendix A2: SevenSegDec.scala}
+\addcontentsline{toc}{section}{Appendix A2: SevenSegDec.scala}
+\input{sources/appendixA2}
+
+\newpage
+\phantomsection
+\label{sec:app_uart}
+\section*{Appendix A3: uart.scala} 
+\addcontentsline{toc}{section}{Appendix A3: uart.scala}
+\input{sources/appendixA3}
+
+\newpage
+\phantomsection
+\label{sec:app_uartdisplay}
+\section*{Appendix A4: UartDisplay.scala}
+\addcontentsline{toc}{section}{Appendix A4: UartDisplay.scala}
+\input{sources/appendixA4}
+
+\newpage
+\phantomsection
+\label{sec:app_tester}
+\section*{Appendix B0: VendingTester.scala}
+\addcontentsline{toc}{section}{Appendix B0: VendingTester.scala}
+\input{sources/appendixB}
+
+\newpage
+\phantomsection
+\label{sec:app_waveform}
+\section*{Appendix B1: Waveform}
+\addcontentsline{toc}{section}{Appendix B1: Waveform}
+\input{sources/appendixB1}
+
+
+\end{document}

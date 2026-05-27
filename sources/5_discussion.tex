@@ -1,0 +1,8 @@
+
+Throughout this project we went through several stages of design, testing and implementation. We started small, with only the basic Vending Machine, which had minimal extra utility, and relied on the user knowing how exactly to operate it. \\
+In the real world it is not good to rely on the user knowing not to press or hold a button or very realistic that you have to input the price of an item yourself. Therefore we implemented a lot of limitations, which made it more realistic to interact with the Vending Machine. It now has a stock limit of how many cans are in the machine, a limit to the amount you can put in so it won't overflow on the display and a limit to the amount of coins.\\[0.1in]
+The added limitations adds a realism when using it, however certain changes could also be made, to make it more realistic. The current design has a limit of 20 cans, however it doesn't distinguish between different kinds of cans you buy. One improvement that can be made is to have a register for each type of can which counts how many are left in stock. \\
+To this, a way to restock cans, would also be a realistic addition.\\[0.1in]
+The structure form of having a Datapath and a fsm which controlls when a given input is valid, made the design much simpler. Instead of needing every logic in one place, we can have an fsm which decides a valid input, and give that input to the datapath which will act based on it, it made having several states much simpler.
+
+

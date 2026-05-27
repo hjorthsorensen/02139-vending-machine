@@ -1,0 +1,89 @@
+\begin{lstlisting}
+import chisel3._
+import chisel3.util._
+
+class VendingFSM extends Module {
+  val io = IO(new Bundle {
+    // Inputs
+    val coin2Edge    = Input(Bool())
+    val coin5Edge    = Input(Bool())
+    val buyEdge      = Input(Bool())
+    val buy          = Input(Bool())
+    val coin2        = Input(Bool())
+    val coin5        = Input(Bool())
+    val totalMoney   = Input(UInt(8.W))
+    val itemPrice    = Input(UInt(8.W))
+  
+
+    // Outputs
+    val signalCoin2  = Output(Bool())
+    val signalCoin5  = Output(Bool())
+    val signalSub    = Output(Bool())
+    val releaseCan   = Output(Bool())
+    val alarm        = Output(Bool())
+    val coinBeingRejected = Output(Bool())
+  })
+
+  val idle :: busy :: rejectCoin :: alarmState :: Nil = Enum(4)
+  val stateReg = RegInit(idle)
+
+  io.signalCoin2 := false.B
+  io.signalCoin5 := false.B
+  io.signalSub   := false.B
+  io.alarm := false.B
+  io.coinBeingRejected := false.B
+  
+
+switch(stateReg) {
+    is(idle) {
+      // Handle coin insertions
+      when(io.coin2Edge) {
+        when(io.totalMoney <= 97.U) {
+          io.signalCoin2 := true.B
+        }.otherwise {
+          stateReg := rejectCoin
+        }
+      }.elsewhen(io.coin5Edge) {
+        when(io.totalMoney <= 94.U) {
+          io.signalCoin5 := true.B
+        }.otherwise {
+          stateReg := rejectCoin
+        }
+      }
+
+      // Handle buy attempts
+      when(io.buyEdge) {
+        when(io.totalMoney >= io.itemPrice) {
+          io.signalSub := true.B
+          stateReg := busy
+        }.otherwise {
+          stateReg := alarmState
+        }
+      }
+    }
+    
+    is(busy) {
+      stateReg := Mux(io.buy, busy, idle) // Stay busy until buy button is released
+    }
+    
+    is(rejectCoin) {
+      // Stay in rejection mode until the physical coin insertion button is released
+      when(!io.coin2 && !io.coin5) {
+        stateReg := idle
+      }
+    }
+
+    is(alarmState) {
+      // Stay in alarm mode until the physical buy button is released
+      when(!io.buy && !io.coin2 && !io.coin5) {
+        stateReg := idle
+      }
+    }
+  }
+
+  // State-based Assignment Outputs
+  io.releaseCan        := (stateReg === busy)
+  io.alarm             := (stateReg === alarmState)
+  io.coinBeingRejected := (stateReg === rejectCoin)
+}
+\end{lstlisting}

@@ -1,0 +1,13 @@
+
+We started of with a basic Vending design. It had several flaws that we wanted our vending machine, not to have. After the design of the basic Vending Machine, where we structured the design as an FSMD, we started adding several constraints to our Vending Machine.  Firstly we added overflow protection, so the totalMoney doesn't go above 99, where before it could, which would lead to a display error since only 2 digits of totalMoney, could be shown at a time on the 4-digit display. Then we added coin limitations, the machine doesn't have space for more than 63 total coins. \\
+With this limitation we added a way for the vending machine to reject coins, either if it would overflow, or if the limit of 63 coins was reached. With the mechanism to reject coins, we also overhauled the alarm system to look more significant with flashing display along with a blinking.
+All these limitations led to our Vending Machine beeing more realistic to interact with and the design having realistic physical limitations.\\[0.1in]
+We then concluded that we needed some form of diagnostics tool added to our Vending Machine. This led to us implementing a UART system as a form of diagnostics, the UART tells the terminal every time some button is pressed, what the action taken by the Vending Machine is.\\ 
+If the Vending Machine is empty, it sends an message that it is empty, and whenever something is bought, it is also displayed on the terminal. \\
+When trying to implement UART we also discovered that our terminal expected 1 stop bit, but the Uart package normally sends 2 stop bits, this led to a shift in the data sent, which made it unreadable. The fix was to manually change the uart to only send 1 bit instead.\\
+After the design phase we could then test the vending machine with our testbench, to make sure it acted as intended. \\[0.1in]
+With all these design choices and steps, we now have a functioning Vending Machine, synthesizable down to our FPGA board, that is working as intended, with realistic physical limitation that make it feel like a real Vending Machine.
+
+
+
+

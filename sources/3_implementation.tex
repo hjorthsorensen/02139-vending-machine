@@ -1,0 +1,46 @@
+\subsection{Selecting items}
+The first thing we did, was to build the basic Vending Machine. Then we broke down, what we wanted to change between our vending machine and the basic version. As stated earlier, we made several changes to the basic version of the vending machine. Firstly we implemented another way to select items. \\
+Instead of directly taking the input \texttt{io.price} and using that, we use a 4-bit wide \texttt{io.price} signal as a selector signal for a mux, which assign \texttt{itemPrice} to different 8-bit values, which we use to purchase different items.\\
+\subsection{Limits}
+The basic Vending Machine relied on us knowing not to press, so the signal overflows, or pressing the buttons in weird combinations which would give wrong signals. In the real world, we can't expect everyone who uses the vending machine to know precisely what to do. Therefore we added several limits to the vending machine. \\
+Firstly we added \texttt{canCount} which counts how many cans are left in the vending machine, and will reject an attempt to purchase if there is no cans left, secondly an \texttt{coinFull} signal which counts the total amount of coins inserted in the Vending machine, and if the amount of coins is above 63, \texttt{coinFull} is true. And the vending machine has no space left for any coins.\\
+These limitations led to changes in how the alarm works and we also added a second alarm for when rejecting a coin. (\texttt{rejectCoinLED}) Instead of lighting an LED up when an alarm is triggered, the alarm signal blinks with a frequency of 2 times on/off pr. second in stead. \\
+When the normal \texttt{alarm} is triggered, a signal \texttt{blinkDuringAlarm} is true, which makes the leftmost two digits on the 4-segment-display blink in the same frequency, we do this by changing which digit is active.\\ 
+The second signal \texttt{coinFull} tracks how many coins are in the vending machine, and if the limit is reached, the \texttt{rejectCoinLED} signal is true, and a correponding LED lights up and starts blinking, and the money Register isn't updated. \\
+Along with the limits for coins and cans we set a hardlimit of 99 kroners as the maximum amount that can be added to the vending machine when purchasing an item. This means when pressing \texttt{coin2}, when the current amount is 98, the signal \texttt{rejectCoinLED} is set to true, the corresponding rejectcoinLED starts blinking, and the coin is returned to the user. The logic behind when a coin is rejecting is that we calculate the result and if it is above 99, we wont update the signal and instead return the coin.\\
+With these limits, we don't have to rely on the person knowing the limits, but instead have them defined in hardware.
+
+\subsection{Extras}
+After a few limits were given to the vending machine, we decided for a change to the 4-segment display. Now when the limits \texttt{coinFull} and \texttt{canCount} are reached, the 4-segment-display will instead of showing price and money, will show either "F-U-L-L" for full or "E-P-T-y" for empty. How we did this is described in section: \nameref{SevenSeg}.
+
+\subsection{UART implementation}
+After these implementations, we decided to make an UART diagnostics system. This is primarily made for diagnostics. Whenever an action is taken by the user, a message is sent on the UART about what happened. The UART display is a seperate state, which takes actions as input from the datapath, and gives an output \texttt{txd}. For the UART, we implemented the following 5 diagnostic messages.
+
+\begin{center}
+\begin{tabular}{|c|c|}
+    \hline
+    \textbf{Action} & \textbf{Message} \\
+    \hline
+    ItemSold & "\texttt{Item sold!\quad\quad\quad\quad\quad            }$\backslash n$"\\
+    \hline
+    Alarm triggered & "Not enough money!\;\;\;\;\:\:     $\backslash n$"\\
+    \hline
+    Vending is empty(cans) & "Machine empty!\quad\quad\quad\,        $\backslash n$"\\
+    \hline
+    Vending is full(coins) & "Coin full!\quad\quad\quad\quad\quad\quad\; $\backslash n$"\\
+    \hline
+    Returning coin & "Returning coin...\quad\quad \;\;\;\;\;$\backslash n$"\\
+    \hline
+\end{tabular}
+\end{center}
+When an action has happened, the datapath will set that action as true for the UART display, and the corresponding message is sent. Each message is 23 characters long and are mapped on a wire called \texttt{messages}. Based on which input we are given, \texttt{msgSel} Message select, is set to a value 0 to 4, based on which message needs to be sent. When a message needs to be sent, it will loop over all the bytes one by one until the whole message is sent.\\
+When trying to implement the UART system, an error occured, because the terminal expected a single stop bit, but 2 bits were sent, when using the standard import, therefore we have UART\nameref{UART} on the appendix because we changed the stop signal to be only 1 bit long. This caused it to send what it thought to be a stop bit but was actually interpreted as the next start bit. That ended up giving a scrambled message, this however was fixed when we changed the UART stop bit to only be 1 bit.\\
+
+\subsection{FSMD}
+This Vending Project is built as a state machine with a datapath (FSMD). Which means all the logic and registers are located in the datapath.\\
+When an input is received into the datapath, it is debounced and sent to the FSM controller, in our project called \texttt{fsm} from the file \texttt{VendingFSM.scala}. The fsm then determines what to do with that signal, if we are idle, then a valid signal is sent back, otherwise an alarm is sent back. The fsm is then kept whatever state is enters based on an action. It enters \texttt{busy} when \texttt{buy} is pressed, and \texttt{totalMoney>=itemPrice}, and returns to \texttt{idle} when \texttt{buy} is released.
+It enters \texttt{rejectCoin} when the \texttt{totalMoney} is either >=94 or >=97 depending on if coin5 or coin2 is pressed, and stays in that state, until both \texttt{coin2} and \texttt{coin5} are released. \\
+And lastly it enters \texttt{alarm} state, when \texttt{itemPrice > totalMoney}, and stays in the state until all buttons are released.
+
+
+
