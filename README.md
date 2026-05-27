@@ -2,7 +2,7 @@
 
 <div class="center">
 
-<embed src="root/small_logo.pdf" style="width:20.0%" /> \
+<embed src="root/small_logo.pdf" style="width:20.0%" /> 
 
 ------------------------------------------------------------------------
 
